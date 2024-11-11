@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calibrage Carte Fictive avec GeoJSON</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        #map { height: 100vh; width: 100%; }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        // Initialiser la carte
+        var map = L.map('map').setView([45.9368, 6.1322], 18);
+
+        // Ajouter le calque de base OpenStreetMap
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 25,
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Définir les données GeoJSON pour chaque étage
+        var geojsonDataEtage1 = {
+            "type": "FeatureCollection",
+            "features": [
+                { "type": "Feature", "properties": { "salle": "14" }, "geometry": { "type": "Polygon", "coordinates": [ [ [ 6.132163752269974, 45.936876281130914 ], [ 6.13233501289262, 45.936869676118668 ], [ 6.132327047282264, 45.936800216909923 ], [ 6.13215517392036, 45.936807887256258 ], [ 6.132163752269974, 45.936876281130914 ] ] ] } },
+                { "type": "Feature", "properties": { "salle": "13" }, "geometry": { "type": "Polygon", "coordinates": [ [ [ 6.132334706522989, 45.936869249988817 ], [ 6.132459398962017, 45.936864775625189 ], [ 6.132452046090921, 45.936795103345098 ], [ 6.132327047282264, 45.93680021690993 ], [ 6.132334706522989, 45.936869249988817 ] ] ] } }
+            ]
+        };
+
+        var geojsonDataEtage2 = {
+            "type": "FeatureCollection",
+            "features": [
+                { "type": "Feature", "properties": { "salle": "24" }, "geometry": { "type": "Polygon", "coordinates": [ [ [ 6.132218592433576, 45.936723513388131 ], [ 6.132342978502976, 45.936718186750738 ], [ 6.132350944113331, 45.936783171692035 ], [ 6.132225945304675, 45.936788498323175 ], [ 6.132218592433576, 45.936723513388131 ] ] ] } },
+                { "type": "Feature", "properties": { "salle": "23" }, "geometry": { "type": "Polygon", "coordinates": [ [ [ 6.132094512733808, 45.936727987763149 ], [ 6.132218592433576, 45.936723939519112 ], [ 6.132224719826159, 45.936788285257947 ], [ 6.132100946496017, 45.936793611888618 ], [ 6.132094512733808, 45.936727987763149 ] ] ] }
+            }]
+        };
+
+        // Fonction de style par défaut
+        function getDefaultStyle() {
+            return {
+                color: "#3388ff",
+                weight: 2,
+                opacity: 1,
+                fillColor: "#3388ff",
+                fillOpacity: 0.4
+            };
+        }
+
+        // Fonction d'interaction (survol et clic)
+        function onEachFeature(feature, layer) {
+            layer.bindTooltip("Salle : " + feature.properties.salle, {
+                permanent: true,
+                direction: "center",
+                className: "leaflet-tooltip-custom"
+            });
+
+            layer.on({
+                mouseover: function(e) {
+                    e.target.setStyle({ fillColor: "#ff7800", color: "#ff7800", fillOpacity: 0.7 });
+                },
+                mouseout: function(e) {
+                    e.target.setStyle(getDefaultStyle());
+                },
+                click: function(e) {
+                    map.fitBounds(e.target.getBounds());
+                }
+            });
+        }
+
+        // Créer les calques GeoJSON pour chaque étage
+        var layerEtage1 = L.geoJSON(geojsonDataEtage1, {
+            style: getDefaultStyle,
+            onEachFeature: onEachFeature
+        });
+
+        var layerEtage2 = L.geoJSON(geojsonDataEtage2, {
+            style: getDefaultStyle,
+            onEachFeature: onEachFeature
+        });
+
+        // Ajouter les calques à la carte et définir le contrôle des calques
+        var baseMaps = {
+            "Étage 1": layerEtage1,
+            "Étage 2": layerEtage2
+        };
+
+        L.control.layers(null, baseMaps, { exclusive: true }).addTo(map);
+
+        // Activer un étage par défaut
+        layerEtage1.addTo(map);
+
+        // Fonction pour gérer l'affichage des tooltips selon le niveau de zoom
+        function updateTooltips() {
+            var currentZoom = map.getZoom();
+            var minZoomForLabels = 16; // Définir le niveau de zoom à partir duquel les labels s'affichent
+
+            [layerEtage1, layerEtage2].forEach(function(layer) {
+                layer.eachLayer(function(featureLayer) {
+                    if (currentZoom < minZoomForLabels) {
+                        featureLayer.unbindTooltip();
+                    } else {
+                        featureLayer.bindTooltip("Salle : " + featureLayer.feature.properties.salle, {
+                            permanent: true,
+                            direction: "center",
+                            className: "leaflet-tooltip-custom"
+                        });
+                    }
+                });
+            });
+        }
+
+        // Ajouter un écouteur pour détecter les changements de niveau de zoom
+        map.on('zoomend', updateTooltips);
+
+        // Optionnel : Géolocalisation de l'utilisateur
+        navigator.geolocation.watchPosition(function(position) {
+            var userLat = position.coords.latitude;
+            var userLng = position.coords.longitude;
+
+            L.marker([userLat, userLng]).addTo(map)
+                .bindPopup("Votre position réelle")
+                .openPopup();
+
+            map.setView([userLat, userLng], map.getZoom());
+
+        }, function(error) {
+            console.error("Erreur de géolocalisation : ", error);
+        });
+    </script>
+</body>
+</html>
