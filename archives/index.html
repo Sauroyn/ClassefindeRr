@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calibrage Carte Fictive</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        #map { height: 100vh; width: 100%; }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        // Initialiser la carte avec un calque OpenStreetMap
+        var map = L.map('map').setView([46.0285, 6.1114], 18); // Ajuste la vue initiale selon ta position
+
+        // Ajouter le calque OpenStreetMap de base
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Définir les dimensions de l'image fictive en pixels (ex : 1000 x 1000)
+        var imageWidth = 1000;
+        var imageHeight = 1000;
+
+        // Définir les bornes de l'image fictive (à ajuster pour le calibrage)
+        var bounds = [
+            [46.0280, 6.1100], // Coin inférieur gauche (Point A à ajuster)
+            [46.0290, 6.1120]  // Coin supérieur droit (Point B à ajuster)
+        ];
+
+        // Charger l'image fictive avec une opacité de 50%
+        var imageOverlay = L.imageOverlay('carte.jpg', bounds, {
+            opacity: 0.5
+        }).addTo(map);
+
+
+        // Exemple de point de géolocalisation utilisateur pour te repérer
+        navigator.geolocation.watchPosition(function(position) {
+            var userLat = position.coords.latitude;
+            var userLng = position.coords.longitude;
+
+            L.marker([userLat, userLng]).addTo(map)
+                .bindPopup("Votre position réelle")
+                .openPopup();
+
+        }, function(error) {
+            console.error("Erreur de géolocalisation : ", error);
+        });
+
+    </script>
+</body>
+</html>
