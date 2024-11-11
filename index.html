@@ -7,56 +7,6 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <style>
         #map { height: 100vh; width: 100%; }
-
-
-        /* Style de base pour le conteneur */
-        .leaflet-control-layers {
-        background-color: #333; /* Couleur de fond */
-        border: 1px solid #444; /* Bordure */
-        color: white; /* Couleur du texte */
-        border-radius: 10px; /* Bords arrondis */
-        padding: 10px; /* Marges internes */
-        font-family: Arial, sans-serif;
-        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3); /* Ombre */
-        }
-
-        /* Couleur des titres des sections (par exemple, "Base Maps") */
-        .leaflet-control-layers-base label, 
-        .leaflet-control-layers-separator + label {
-            color: #ff9800; /* Couleur des titres */
-            font-weight: bold;
-        }
-
-        /* Style des cases à cocher et des étiquettes */
-        .leaflet-control-layers-list label {
-            color: #ddd; /* Couleur des noms de calques */
-            cursor: pointer;
-            padding: 5px 0;
-        }
-
-        /* Style pour chaque calque (fond pour le rendre visible) */
-        .leaflet-control-layers-list input[type="radio"], 
-        .leaflet-control-layers-list input[type="checkbox"] {
-            margin-right: 5px;
-        }
-
-        /* Style au survol */
-        .leaflet-control-layers-list label:hover {
-            color: #ff9800;
-        }
-
-        /* Style personnalisé pour le bouton de fermeture (si collapsed) */
-        .leaflet-control-layers-toggle {
-            background-color: #333; /* Fond du bouton */
-            color: #ff9800; /* Couleur de l'icône */
-            border-radius: 50%; /* Rond */
-            width: 25px;
-            height: 25px;
-            text-align: center;
-            font-size: 16px;
-            font-weight: bold;
-        }
-
     </style>
 </head>
 <body>
