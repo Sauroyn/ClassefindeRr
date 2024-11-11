@@ -96,7 +96,7 @@
         // Fonction pour gérer l'affichage des tooltips selon le niveau de zoom
         function updateTooltips() {
             var currentZoom = map.getZoom();
-            var minZoomForLabels = 16; // Définir le niveau de zoom à partir duquel les labels s'affichent
+            var minZoomForLabels = 20; // Définir le niveau de zoom à partir duquel les labels s'affichent
 
             [layerEtage1, layerEtage2].forEach(function(layer) {
                 layer.eachLayer(function(featureLayer) {
