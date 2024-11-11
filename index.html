@@ -88,7 +88,7 @@
             "Étage 2": layerEtage2
         };
 
-        L.control.layers(null, baseMaps, { exclusive: true }).addTo(map);
+        L.control.layers(baseMaps).addTo(map);
 
         // Activer un étage par défaut
         layerEtage1.addTo(map);
