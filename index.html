@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lycée Louis Lachenal</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-search@3.0.0/dist/leaflet-search.min.css" />
     <style>
         #map { height: 100vh; width: 100%; }
     </style>
@@ -12,6 +13,8 @@
 <body>
     <div id="map"></div>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-search@3.0.0/dist/leaflet-search.min.js"></script>
+
     <script>
         // Initialiser la carte
         var map = L.map('map').setView([45.9368, 6.1322], 18);
@@ -26,9 +29,9 @@
             "type": "FeatureCollection",
             "features": [
                 { "type": "Feature", "properties": { "salle": "14" }, "geometry": { "type": "Polygon", "coordinates": [ [ [ 6.132163752269974, 45.936876281130914 ], [ 6.13233501289262, 45.936869676118668 ], [ 6.132327047282264, 45.936800216909923 ], [ 6.13215517392036, 45.936807887256258 ], [ 6.132163752269974, 45.936876281130914 ] ] ] } },
-                { "type": "Feature", "properties": { "salle": "13" }, "geometry": { "type": "Polygon", "coordinates": [ [ [ 6.132334706522989, 45.936869249988817 ], [ 6.132459398962017, 45.936864775625189 ], [ 6.132452046090921, 45.936795103345098 ], [ 6.132327047282264, 45.93680021690993 ], [ 6.132334706522989, 45.936869249988817 ] ] ] } },            ]
-        }
-;
+                { "type": "Feature", "properties": { "salle": "13" }, "geometry": { "type": "Polygon", "coordinates": [ [ [ 6.132334706522989, 45.936869249988817 ], [ 6.132459398962017, 45.936864775625189 ], [ 6.132452046090921, 45.936795103345098 ], [ 6.132327047282264, 45.93680021690993 ], [ 6.132334706522989, 45.936869249988817 ] ] ] } },
+            ]
+        };
 
         var geojsonDataEtage2 = {
             "type": "FeatureCollection",
@@ -92,6 +95,15 @@
         // Activer un étage par défaut
         layerEtage1.addTo(map);
 
+        // Variable pour suivre le calque actif
+        var activeLayer = "Étage 1";
+
+        // Écouter l'événement `baselayerchange` pour détecter le calque actif
+        map.on('baselayerchange', function(e) {
+            activeLayer = e.name; // `e.name` contient le nom du calque activé
+            console.log("Calque actif :", activeLayer);
+        });
+
         // Fonction pour gérer l'affichage des tooltips selon le niveau de zoom
         function updateTooltips() {
             var currentZoom = map.getZoom();
@@ -128,7 +140,54 @@
 
         }, function(error) {
             console.error("Erreur de géolocalisation : ", error);
-        });        
+        });
+
+        // Initialiser le contrôle de recherche
+        var searchControl = new L.Control.Search({
+            layer: L.layerGroup([layerEtage1, layerEtage2]), // Ajouter tous les calques ici
+            propertyName: 'salle', // Propriété dans GeoJSON utilisée pour la recherche
+            initial: false,
+            zoom: 21, // Niveau de zoom lors de la recherche d'une salle
+            marker: false,
+            moveToLocation: function(latlng, title, map) {
+                // Déterminer le calque auquel appartient l'élément trouvé
+                var foundInLayer = null;
+                
+                // Vérifier dans quel calque (étage) se trouve la salle trouvée
+                layerEtage1.eachLayer(function(layer) {
+                    if (layer.feature && layer.feature.properties.salle === title) {
+                        foundInLayer = layerEtage1;
+                    }
+                });
+                
+                layerEtage2.eachLayer(function(layer) {
+                    if (layer.feature && layer.feature.properties.salle === title) {
+                        foundInLayer = layerEtage2;
+                    }
+                });
+                
+                // Si l'élément trouvé n'est pas sur le calque actif, changer de calque
+                if (foundInLayer && !map.hasLayer(foundInLayer)) {
+                    if (foundInLayer === layerEtage1) {
+                        layerEtage2.removeFrom(map);
+                        layerEtage1.addTo(map);
+                    } else if (foundInLayer === layerEtage2) {
+                        layerEtage1.removeFrom(map);
+                        layerEtage2.addTo(map);
+                    }
+                }
+                
+                // Ensuite, zoomer sur la salle trouvée
+                map.setView(latlng, 21); // Zoomer sur l'emplacement de la salle
+            }
+        });
+        
+        // Ajouter le contrôle de recherche à la carte
+        map.addControl(searchControl);
+
+
+
+       
     </script>
 </body>
 </html>
