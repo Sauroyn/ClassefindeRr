@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carte avec Routage Leaflet</title>
+    <!-- Feuille de style Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <!-- Feuille de style Leaflet Routing Machine -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+    <style>
+        #map {
+            height: 100vh; /* Affiche la carte sur toute la hauteur de la fenêtre */
+        }
+    </style>
+</head>
+<body>
+
+<div id="map"></div>
+
+<!-- Script Leaflet -->
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+<!-- Script Leaflet Routing Machine -->
+<script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.min.js"></script>
+<!-- Script Leaflet Control Geocoder pour l'option de géocodage -->
+<script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+
+<script>
+    // Initialisation de la carte
+    const map = L.map('map').setView([48.8566, 2.3522], 13); // Coordonnées de Paris par défaut
+
+    // Ajout d'un fond de carte OpenStreetMap
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap'
+    }).addTo(map);
+
+    // Configuration du routage avec Leaflet Routing Machine, avec champs intégrés pour saisie des points
+    L.Routing.control({
+        waypoints: [],
+        routeWhileDragging: true,
+        geocoder: L.Control.Geocoder.nominatim() // Géocodeur intégré pour la saisie des adresses
+    }).addTo(map);
+</script>
+
+</body>
+</html>
