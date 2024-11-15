@@ -128,19 +128,24 @@
         map.on('zoomend', updateTooltips);
 
         // Optionnel : Géolocalisation de l'utilisateur
-        navigator.geolocation.watchPosition(function(position) {
-            var userLat = position.coords.latitude;
-            var userLng = position.coords.longitude;
+        map.locate({setView: true, maxZoom: 16});
 
-            L.marker([userLat, userLng]).addTo(map)
-                .bindPopup("Votre position réelle")
-                .openPopup();
+        function onLocationFound(e) {
+            var radius = e.accuracy;
 
-            map.setView([userLat, userLng], map.getZoom());
+            L.marker(e.latlng).addTo(map)
+                .bindPopup("You are within " + radius + " meters from this point").openPopup();
 
-        }, function(error) {
-            console.error("Erreur de géolocalisation : ", error);
-        });
+            L.circle(e.latlng, radius).addTo(map);
+        }
+
+        map.on('locationfound', onLocationFound);
+
+        function onLocationError(e) {
+            alert(e.message);
+        }
+
+        map.on('locationerror', onLocationError);
 
         // Initialiser le contrôle de recherche
         var searchControl = new L.Control.Search({
