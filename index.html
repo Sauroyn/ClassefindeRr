@@ -179,11 +179,16 @@
             var radius = e.accuracy;
 
             L.marker(e.latlng).addTo(map)
-                .bindPopup("You are within " + radius + " meters from this point").openPopup();
+                .bindPopup("vous êtes dans les " + radius + " m").openPopup();
 
-            L.circle(e.latlng, radius).addTo(map);
-        }
-
+                L.circle(e.latlng, {
+                radius: radius,
+                color: "#15803d",        // Bordure verte
+                opacity: 0.8,
+                fillColor: "#16a34a",    // Remplissage vert clair
+                fillOpacity: 0.2 
+                }).addTo(map);
+            }
         map.on('locationfound', onLocationFound);
 
         function onLocationError(e) {
