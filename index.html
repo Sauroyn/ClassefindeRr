@@ -147,48 +147,56 @@
 
         map.on('locationerror', onLocationError);
 
-        // Initialiser le contrôle de recherche
-        var searchControl = new L.Control.Search({
-            layer: L.layerGroup([layerEtage1, layerEtage2]), // Ajouter tous les calques ici
-            propertyName: 'salle', // Propriété dans GeoJSON utilisée pour la recherche
-            initial: false,
-            zoom: 21, // Niveau de zoom lors de la recherche d'une salle
-            marker: false,
-            moveToLocation: function(latlng, title, map) {
-                // Déterminer le calque auquel appartient l'élément trouvé
-                var foundInLayer = null;
-                
-                // Vérifier dans quel calque (étage) se trouve la salle trouvée
-                layerEtage1.eachLayer(function(layer) {
-                    if (layer.feature && layer.feature.properties.salle === title) {
-                        foundInLayer = layerEtage1;
-                    }
-                });
-                
-                layerEtage2.eachLayer(function(layer) {
-                    if (layer.feature && layer.feature.properties.salle === title) {
-                        foundInLayer = layerEtage2;
-                    }
-                });
-                
-                // Si l'élément trouvé n'est pas sur le calque actif, changer de calque
-                if (foundInLayer && !map.hasLayer(foundInLayer)) {
-                    if (foundInLayer === layerEtage1) {
-                        layerEtage2.removeFrom(map);
-                        layerEtage1.addTo(map);
-                    } else if (foundInLayer === layerEtage2) {
-                        layerEtage1.removeFrom(map);
-                        layerEtage2.addTo(map);
-                    }
-                }
-                
-                // Ensuite, zoomer sur la salle trouvée
-                map.setView(latlng, 21); // Zoomer sur l'emplacement de la salle
+        function getHighlightStyle() {
+        return {
+            color: "#ff0000",
+            weight: 3,
+            opacity: 1,
+            fillColor: "#ff5555",
+            fillOpacity: 0.7
+        };
+    }
+
+    // Variable pour stocker la salle actuellement mise en évidence
+    var highlightedLayer = null;
+
+    // Initialiser le contrôle de recherche
+    var searchControl = new L.Control.Search({
+        layer: L.layerGroup([layerEtage1, layerEtage2]), // Ajouter tous les calques ici
+        propertyName: 'salle', // Propriété dans GeoJSON utilisée pour la recherche
+        initial: false,
+        zoom: 21, // Niveau de zoom lors de la recherche d'une salle
+        marker: false,
+        moveToLocation: function(latlng, title, map) {
+            // Réinitialiser le style de la salle précédemment mise en évidence
+            if (highlightedLayer) {
+                highlightedLayer.setStyle(getDefaultStyle());
+                highlightedLayer = null;
             }
-        });
-        
-        // Ajouter le contrôle de recherche à la carte
-        map.addControl(searchControl);
+
+            // Trouver et mettre en évidence la salle recherchée
+            [layerEtage1, layerEtage2].forEach(function(layer) {
+                layer.eachLayer(function(featureLayer) {
+                    if (featureLayer.feature && featureLayer.feature.properties.salle === title) {
+                        highlightedLayer = featureLayer; // Mémoriser la salle mise en évidence
+                        featureLayer.setStyle(getHighlightStyle()); // Mettre en évidence
+                        map.fitBounds(featureLayer.getBounds()); // Zoomer sur la salle
+                    }
+                });
+            });
+        }
+    });
+
+    // Ajouter le contrôle de recherche à la carte
+    map.addControl(searchControl);
+
+    // Optionnel : Réinitialiser la mise en évidence après un clic ailleurs
+    map.on('click', function() {
+        if (highlightedLayer) {
+            highlightedLayer.setStyle(getDefaultStyle());
+            highlightedLayer = null;
+        }
+    });
 
 
 
