@@ -218,23 +218,38 @@
         zoom: 21, // Niveau de zoom lors de la recherche d'une salle
         marker: false,
         moveToLocation: function(latlng, title, map) {
-            // Réinitialiser le style de la salle précédemment mise en évidence
-            if (highlightedLayer) {
-                highlightedLayer.setStyle(getDefaultStyle());
-                highlightedLayer = null;
-            }
+    // Réinitialiser le style de la salle précédemment mise en évidence
+    if (highlightedLayer) {
+        highlightedLayer.setStyle(getDefaultStyle());
+        highlightedLayer = null;
+    }
 
-            // Trouver et mettre en évidence la salle recherchée
-            [layerEtage1, layerEtage2].forEach(function(layer) {
-                layer.eachLayer(function(featureLayer) {
-                    if (featureLayer.feature && featureLayer.feature.properties.salle === title) {
-                        highlightedLayer = featureLayer; // Mémoriser la salle mise en évidence
-                        featureLayer.setStyle(getHighlightStyle()); // Mettre en évidence
-                        map.fitBounds(featureLayer.getBounds()); // Zoomer sur la salle
+    // Trouver le calque contenant la salle recherchée
+    [layerEtage1, layerEtage2].forEach(function(layer, index) {
+        layer.eachLayer(function(featureLayer) {
+            if (featureLayer.feature && featureLayer.feature.properties.salle === title) {
+                // Si la salle est trouvée dans ce calque
+                highlightedLayer = featureLayer; // Mémoriser la salle mise en évidence
+                featureLayer.setStyle(getHighlightStyle()); // Mettre en évidence
+                map.fitBounds(featureLayer.getBounds()); // Zoomer sur la salle
+
+                // Activer le calque correspondant
+                var layerName = index === 0 ? "Étage 1" : "Étage 2"; // Déduire le nom du calque
+                if (activeLayer !== layerName) {
+                    map.removeLayer(layerEtage1);
+                    map.removeLayer(layerEtage2);
+                    if (layerName === "Étage 1") {
+                        layerEtage1.addTo(map);
+                    } else if (layerName === "Étage 2") {
+                        layerEtage2.addTo(map);
                     }
-                });
-            });
-        }
+                    activeLayer = layerName; // Mettre à jour le calque actif
+                }
+            }
+        });
+    });
+}
+
     });
 
     // Ajouter le contrôle de recherche à la carte
