@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Lycée Louis Lachenal Geographier</title>
+    <!-- Inclusion du CSS pour Leaflet Routing Machine -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.1/dist/leaflet-routing-machine.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-search@3.0.0/dist/leaflet-search.min.css" />
     <style>
@@ -14,6 +16,7 @@
     <div id="map"></div>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-search@3.0.0/dist/leaflet-search.min.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.1/dist/leaflet-routing-machine.js"></script>
 
     <script>
         // Initialiser la carte
@@ -262,6 +265,20 @@
             highlightedLayer = null;
         }
     });
+
+
+
+    var start = L.latLng(48.8566, 2.3522); // Paris
+    var end = L.latLng(48.8708, 2.3785); // Un autre point à Paris
+
+    var routeControl = L.Routing.control({
+        waypoints: [start, end],
+        router: L.Routing.osrmv1({
+            serviceUrl: 'http://89.168.57.91:5000/route/v1', // URL de votre serveur OSRM local
+            useHints: false // Optionnel, dépend de votre configuration du serveur OSRM
+        }),
+        routeWhileDragging: true // Permet de déplacer les points en temps réel
+    }).addTo(map);
 
     </script>
 </body>
