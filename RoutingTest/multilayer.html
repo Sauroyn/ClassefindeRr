@@ -1,99 +1,94 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leaflet Routing Machine avec contrôle d'étages</title>
-
-    <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <title>Leaflet Basic Map</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.1/dist/leaflet-routing-machine.css" />
-
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-        }
         #map {
-            width: 100%;
-            height: 100%;
+            height: 100vh;
         }
     </style>
 </head>
 <body>
     <div id="map"></div>
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
-
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.1/dist/leaflet-routing-machine.js"></script>
     <script>
-        // Initialisation de la carte
-        const map = L.map('map').setView([48.8566, 2.3522], 13); // Coordonnées pour Paris
+        // Initialize the map
+        const map = L.map('map').setView([48.8566, 2.3522], 13); // Centered on Paris
 
-        // Ajouter une couche de tuiles OpenStreetMap
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        // Define base layers
+        const streets = L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
             maxZoom: 19,
-            attribution: '© OpenStreetMap contributors'
-        }).addTo(map);
+            attribution: '&copy; OpenStreetMap contributors'
+        });
 
-        // Calques pour chaque étage
-        var étage1Layer = L.layerGroup();
-        var étage2Layer = L.layerGroup();
+        const satellite = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19, // Augmentez ici à 19 pour correspondre à "Streets"
+            attribution: '&copy; OpenTopoMap contributors'
+        });
 
-        // Initialiser l'itinéraire
-        var routeControl;
 
-        // Fonction pour calculer l'itinéraire et l'afficher
-        function calculateRoute(start, end, level) {
-            // Supprimer l'itinéraire actuel
-            if (routeControl) {
-                routeControl.remove();
-            }
+        // Add default base layer
+        streets.addTo(map);
 
-            // Vérification que les coordonnées sont définies correctement
-            if (!start || !end) {
-                console.error("Les coordonnées de départ et d'arrivée doivent être définies");
-                return;
-            }
-
-            // Configurer l'URL de l'OSRM pour accepter le niveau
-            var serviceUrl = 'http://localhost:5000/route/v1/foot/';
-            var url = serviceUrl + start.lng + ',' + start.lat + ';' + end.lng + ',' + end.lat + '?level=' + level;
-
-            // Utilisation de Leaflet Routing Machine avec OSRM filtré par niveau
-            routeControl = L.Routing.control({
-                waypoints: [start, end],
-                router: L.Routing.osrmv1({
-                    serviceUrl: url,  // URL avec filtrage par niveau
-                    useHints: true,
-                }),
-                routeWhileDragging: true
-            }).addTo(map);
-        }
-
-        // Créer un contrôle de calques pour activer/désactiver les étages
-        var baseLayers = {};
-        var overlays = {
-            "Étage 1": étage1Layer,
-            "Étage 2": étage2Layer
+        // Layer control
+        const baseMaps = {
+            "Streets": streets,
+            "Satellite": satellite
         };
 
-        // Ajouter le contrôle de calques à la carte
-        L.control.layers(baseLayers, overlays).addTo(map);
+        L.control.layers(baseMaps).addTo(map);
 
-        // Fonction pour activer un étage
-        function setActiveFloor(floor) {
-            var start = L.latLng(48.8566, 2.3522); // Point de départ
-            var end = L.latLng(48.8588443, 2.2943506); // Point d'arrivée
+        // OSRM server URLs
+        const osrmRemote = "https://router.project-osrm.org/route/v1";
+        const osrmLocal = "http://89.168.57.91:5000/route/v1";
 
-            // Calculer l'itinéraire pour l'étage sélectionné
-            calculateRoute(start, end, floor);
+        // Waypoints
+        let waypoints = [
+            L.latLng(48.8566, 2.3522), // Start in Paris
+            L.latLng(48.864716, 2.349014) // End at another point in Paris
+        ];
+
+        // Routing control
+        let routingControl;
+
+        function updateRouting(serverUrl) {
+            if (routingControl) {
+                map.removeControl(routingControl); // Remove existing routing control
+            }
+
+            routingControl = L.Routing.control({
+                waypoints: waypoints, // Use saved waypoints
+                routeWhileDragging: true,
+                router: new L.Routing.OSRMv1({
+                    serviceUrl: serverUrl
+                })
+            });
+
+            routingControl.on('waypointschanged', function (event) {
+                // Save the updated waypoints when user drags them
+                waypoints = event.waypoints.map(wp => wp.latLng);
+            });
+
+            routingControl.addTo(map);
         }
 
-        // Initialiser avec l'étage 1 sélectionné
-        setActiveFloor(1);
+        // Initialize with the local server
+        updateRouting(osrmLocal);
 
+        // Listen to base layer changes
+        map.on('baselayerchange', function (event) {
+            if (event.name === "Streets") {
+                updateRouting(osrmLocal); // Use local OSRM server
+            } else if (event.name === "Satellite") {
+                updateRouting(osrmRemote); // Use remote OSRM server
+            }
+        });
     </script>
 </body>
 </html>
