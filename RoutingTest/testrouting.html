@@ -23,29 +23,41 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <!-- Inclusion de la bibliothèque Leaflet Routing Machine -->
     <script src="https://unpkg.com/leaflet-routing-machine@3.2.1/dist/leaflet-routing-machine.js"></script>
-    <script>
-        // Initialisation de la carte et définition de sa vue
-        var map = L.map('map').setView([48.8566, 2.3522], 13); // Coordonnées pour Paris
+    <!-- Inclusion de la bibliothèque Leaflet Control Geocoder -->
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
 
-        // Ajout d'un fond de carte (OpenStreetMap)
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    <script>
+        // Initialisation de la carte
+        var map = L.map('map').setView([48.8566, 2.3522], 13);
+
+        // Ajout d'un fond de carte OpenStreetMap
+        var baseLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
             attribution: '© OpenStreetMap contributors'
         }).addTo(map);
 
-        // Définition des points de départ et d'arrivée pour l'itinéraire
-        var start = L.latLng(45.93750966640477, 6.1329507734525395); 
-        var end = L.latLng(45.93728522718916, 6.1323422250561554); 
+        // Variables pour stocker le calque actif (level1 ou level2)
+        var activeLayer = "level1"; // Par défaut, calque `level1`
 
-        // Configuration de la source de routage pour utiliser votre serveur OSRM local
+        // Définition des points de départ et d'arrivée pour l'itinéraire
+        var start = L.latLng(45.93750966640477, 6.1329507734525395);
+        var end = L.latLng(45.93728522718916, 6.1323422250561554);
+
+        // Configuration du routeur personnalisé
+        var customRouter = L.Routing.osrmv1({
+            serviceUrl: 'http://127.0.0.1:5000/route/v1',
+            useHints: false,
+        });
+      
+
+        // Ajout du contrôle de routage avec le routeur personnalisé
         var routeControl = L.Routing.control({
             waypoints: [start, end],
-            router: L.Routing.osrmv1({
-                serviceUrl: 'http://89.168.57.91:5000/route/v1', // URL de votre serveur OSRM local
-                useHints: false // Optionnel, dépend de votre configuration du serveur OSRM
-            }),
-            routeWhileDragging: true // Permet de déplacer les points en temps réel
+            router: customRouter,
+            routeWhileDragging: true
         }).addTo(map);
+
     </script>
 </body>
 </html>

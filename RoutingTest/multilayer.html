@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaflet Routing Machine avec contrôle d'étages</title>
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.1/dist/leaflet-routing-machine.css" />
+
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+
+    <script>
+        // Initialisation de la carte
+        const map = L.map('map').setView([48.8566, 2.3522], 13); // Coordonnées pour Paris
+
+        // Ajouter une couche de tuiles OpenStreetMap
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Calques pour chaque étage
+        var étage1Layer = L.layerGroup();
+        var étage2Layer = L.layerGroup();
+
+        // Initialiser l'itinéraire
+        var routeControl;
+
+        // Fonction pour calculer l'itinéraire et l'afficher
+        function calculateRoute(start, end, level) {
+            // Supprimer l'itinéraire actuel
+            if (routeControl) {
+                routeControl.remove();
+            }
+
+            // Vérification que les coordonnées sont définies correctement
+            if (!start || !end) {
+                console.error("Les coordonnées de départ et d'arrivée doivent être définies");
+                return;
+            }
+
+            // Configurer l'URL de l'OSRM pour accepter le niveau
+            var serviceUrl = 'http://localhost:5000/route/v1/foot/';
+            var url = serviceUrl + start.lng + ',' + start.lat + ';' + end.lng + ',' + end.lat + '?level=' + level;
+
+            // Utilisation de Leaflet Routing Machine avec OSRM filtré par niveau
+            routeControl = L.Routing.control({
+                waypoints: [start, end],
+                router: L.Routing.osrmv1({
+                    serviceUrl: url,  // URL avec filtrage par niveau
+                    useHints: true,
+                }),
+                routeWhileDragging: true
+            }).addTo(map);
+        }
+
+        // Créer un contrôle de calques pour activer/désactiver les étages
+        var baseLayers = {};
+        var overlays = {
+            "Étage 1": étage1Layer,
+            "Étage 2": étage2Layer
+        };
+
+        // Ajouter le contrôle de calques à la carte
+        L.control.layers(baseLayers, overlays).addTo(map);
+
+        // Fonction pour activer un étage
+        function setActiveFloor(floor) {
+            var start = L.latLng(48.8566, 2.3522); // Point de départ
+            var end = L.latLng(48.8588443, 2.2943506); // Point d'arrivée
+
+            // Calculer l'itinéraire pour l'étage sélectionné
+            calculateRoute(start, end, floor);
+        }
+
+        // Initialiser avec l'étage 1 sélectionné
+        setActiveFloor(1);
+
+    </script>
+</body>
+</html>
