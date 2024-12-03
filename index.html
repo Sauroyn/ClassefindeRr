@@ -2,18 +2,21 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lycée Louis Lachenal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Lycée Louis Lachenal Geographier</title>
+    <!-- Inclusion du CSS pour Leaflet Routing Machine -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.1/dist/leaflet-routing-machine.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-search@3.0.0/dist/leaflet-search.min.css" />
     <style>
-        #map { height: 100vh; width: 100%; }
+        #map { height: 98vh; width: 100%; }
     </style>
 </head>
 <body>
     <div id="map"></div>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-search@3.0.0/dist/leaflet-search.min.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.1/dist/leaflet-routing-machine.js"></script>
 
     <script>
         // Initialiser la carte
@@ -21,7 +24,7 @@
 
         // Ajouter le calque de base OpenStreetMap
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 25,
+            maxZoom: 21,
         }).addTo(map);
 
         // Définir les données GeoJSON pour chaque étage
@@ -44,13 +47,58 @@
         // Fonction de style par défaut
         function getDefaultStyle() {
             return {
-                color: "#3388ff",
+                color: "#16a34a",
                 weight: 2,
                 opacity: 1,
-                fillColor: "#3388ff",
+                fillColor: "#22c55e",
                 fillOpacity: 0.4
             };
         }
+
+        // Coordonnées et zoom de départ
+    var initialView = {
+        center: [45.9368, 6.1322], // Coordonnées initiales
+        zoom: 18 // Niveau de zoom initial
+    };
+
+    // Créer un nouveau contrôle pour réinitialiser la vue
+    var resetViewControl = L.Control.extend({
+        options: {
+            position: 'topleft' // Position du bouton (à côté des boutons de zoom)
+        },
+
+        onAdd: function(map) {
+            var container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
+
+            // Style du bouton
+            container.style.backgroundColor = 'white';
+            container.style.width = '30px';
+            container.style.height = '30px';
+            container.style.cursor = 'pointer';
+            container.style.display = 'flex';
+            container.style.alignItems = 'center';
+            container.style.justifyContent = 'center';
+            container.innerHTML = '<h1><b>⟳</b></h1>'; // Symbole du bouton (vous pouvez le personnaliser)
+            container.title = "Recentrer"; 
+
+            container.onmouseover = function() {
+                container.style.backgroundColor = '#e0e0e0'; // Couleur légèrement assombrie
+            };
+            container.onmouseout = function() {
+                container.style.backgroundColor = 'white'; // Couleur d'origine
+            };
+
+            // Action lors du clic
+            container.onclick = function() {
+                map.setView(initialView.center, initialView.zoom); // Revenir à la vue initiale
+            };
+
+            return container;
+        }
+    });
+
+    // Ajouter le bouton à la carte
+    map.addControl(new resetViewControl());
 
         // Fonction d'interaction (survol et clic)
         function onEachFeature(feature, layer) {
@@ -62,7 +110,7 @@
 
             layer.on({
                 mouseover: function(e) {
-                    e.target.setStyle({ fillColor: "#ff7800", color: "#ff7800", fillOpacity: 0.7 });
+                    e.target.setStyle({ fillColor: "#16a34a", color: "#15803d", fillOpacity: 0.7 });
                 },
                 mouseout: function(e) {
                     e.target.setStyle(getDefaultStyle());
@@ -128,66 +176,109 @@
         map.on('zoomend', updateTooltips);
 
         // Optionnel : Géolocalisation de l'utilisateur
-        navigator.geolocation.watchPosition(function(position) {
-            var userLat = position.coords.latitude;
-            var userLng = position.coords.longitude;
+        map.locate({setView: true, maxZoom: 16});
 
-            L.marker([userLat, userLng]).addTo(map)
-                .bindPopup("Votre position réelle")
-                .openPopup();
+        function onLocationFound(e) {
+            var radius = e.accuracy;
 
-            map.setView([userLat, userLng], map.getZoom());
+            L.marker(e.latlng).addTo(map)
+                .bindPopup("vous êtes dans les " + radius + " m").openPopup();
 
-        }, function(error) {
-            console.error("Erreur de géolocalisation : ", error);
-        });
+                L.circle(e.latlng, {
+                radius: radius,
+                color: "#15803d",        // Bordure verte
+                opacity: 0.8,
+                fillColor: "#16a34a",    // Remplissage vert clair
+                fillOpacity: 0.2 
+                }).addTo(map);
+            }
+        map.on('locationfound', onLocationFound);
 
-        // Initialiser le contrôle de recherche
-        var searchControl = new L.Control.Search({
-            layer: L.layerGroup([layerEtage1, layerEtage2]), // Ajouter tous les calques ici
-            propertyName: 'salle', // Propriété dans GeoJSON utilisée pour la recherche
-            initial: false,
-            zoom: 21, // Niveau de zoom lors de la recherche d'une salle
-            marker: false,
-            moveToLocation: function(latlng, title, map) {
-                // Déterminer le calque auquel appartient l'élément trouvé
-                var foundInLayer = null;
-                
-                // Vérifier dans quel calque (étage) se trouve la salle trouvée
-                layerEtage1.eachLayer(function(layer) {
-                    if (layer.feature && layer.feature.properties.salle === title) {
-                        foundInLayer = layerEtage1;
-                    }
-                });
-                
-                layerEtage2.eachLayer(function(layer) {
-                    if (layer.feature && layer.feature.properties.salle === title) {
-                        foundInLayer = layerEtage2;
-                    }
-                });
-                
-                // Si l'élément trouvé n'est pas sur le calque actif, changer de calque
-                if (foundInLayer && !map.hasLayer(foundInLayer)) {
-                    if (foundInLayer === layerEtage1) {
-                        layerEtage2.removeFrom(map);
+        function onLocationError(e) {
+            alert(e.message);
+        }
+
+        map.on('locationerror', onLocationError);
+
+        function getHighlightStyle() {
+        return {
+            color: "#15803d",
+            weight: 3,
+            opacity: 1,
+            fillColor: "#16a34a",
+            fillOpacity: 0.7
+        };
+    }
+
+    // Variable pour stocker la salle actuellement mise en évidence
+    var highlightedLayer = null;
+
+    // Initialiser le contrôle de recherche
+    var searchControl = new L.Control.Search({
+        layer: L.layerGroup([layerEtage1, layerEtage2]), // Ajouter tous les calques ici
+        propertyName: 'salle', // Propriété dans GeoJSON utilisée pour la recherche
+        initial: false,
+        zoom: 21, // Niveau de zoom lors de la recherche d'une salle
+        marker: false,
+        moveToLocation: function(latlng, title, map) {
+    // Réinitialiser le style de la salle précédemment mise en évidence
+    if (highlightedLayer) {
+        highlightedLayer.setStyle(getDefaultStyle());
+        highlightedLayer = null;
+    }
+
+    // Trouver le calque contenant la salle recherchée
+    [layerEtage1, layerEtage2].forEach(function(layer, index) {
+        layer.eachLayer(function(featureLayer) {
+            if (featureLayer.feature && featureLayer.feature.properties.salle === title) {
+                // Si la salle est trouvée dans ce calque
+                highlightedLayer = featureLayer; // Mémoriser la salle mise en évidence
+                featureLayer.setStyle(getHighlightStyle()); // Mettre en évidence
+                map.fitBounds(featureLayer.getBounds()); // Zoomer sur la salle
+
+                // Activer le calque correspondant
+                var layerName = index === 0 ? "Étage 1" : "Étage 2"; // Déduire le nom du calque
+                if (activeLayer !== layerName) {
+                    map.removeLayer(layerEtage1);
+                    map.removeLayer(layerEtage2);
+                    if (layerName === "Étage 1") {
                         layerEtage1.addTo(map);
-                    } else if (foundInLayer === layerEtage2) {
-                        layerEtage1.removeFrom(map);
+                    } else if (layerName === "Étage 2") {
                         layerEtage2.addTo(map);
                     }
+                    activeLayer = layerName; // Mettre à jour le calque actif
                 }
-                
-                // Ensuite, zoomer sur la salle trouvée
-                map.setView(latlng, 21); // Zoomer sur l'emplacement de la salle
             }
         });
-        
-        // Ajouter le contrôle de recherche à la carte
-        map.addControl(searchControl);
+    });
+}
+
+    });
+
+    // Ajouter le contrôle de recherche à la carte
+    map.addControl(searchControl);
+
+    // Optionnel : Réinitialiser la mise en évidence après un clic ailleurs
+    map.on('click', function() {
+        if (highlightedLayer) {
+            highlightedLayer.setStyle(getDefaultStyle());
+            highlightedLayer = null;
+        }
+    });
 
 
 
-       
+    var start = L.latLng(45.93750966640477, 6.1329507734525395); 
+    var end = L.latLng(45.93728522718916, 6.1323422250561554);
+
+    var routeControl = L.Routing.control({
+        waypoints: [start, end],
+        router: L.Routing.osrmv1({
+            serviceUrl: 'http://89.168.57.91:5000/route/v1', // URL de votre serveur OSRM local
+            useHints: false // Optionnel, dépend de votre configuration du serveur OSRM
+        }),
+        routeWhileDragging: true // Permet de déplacer les points en temps réel
+    }).addTo(map);
     </script>
 </body>
 </html>
