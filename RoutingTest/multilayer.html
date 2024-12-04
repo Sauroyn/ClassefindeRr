@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leaflet Basic Map</title>
+    <title>Leaflet Map with Custom OSRM Servers</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.1/dist/leaflet-routing-machine.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <style>
@@ -22,16 +22,15 @@
         const map = L.map('map').setView([48.8566, 2.3522], 13); // Centered on Paris
 
         // Define base layers
-        const streets = L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+        const streets = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
             attribution: '&copy; OpenStreetMap contributors'
         });
 
         const satellite = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19, // Augmentez ici à 19 pour correspondre à "Streets"
+            maxZoom: 17,
             attribution: '&copy; OpenTopoMap contributors'
         });
-
 
         // Add default base layer
         streets.addTo(map);
@@ -42,53 +41,42 @@
             "Satellite": satellite
         };
 
-        L.control.layers(baseMaps).addTo(map);
+        const layerControl = L.control.layers(baseMaps).addTo(map);
 
-        // OSRM server URLs
-        const osrmRemote = "https://router.project-osrm.org/route/v1";
-        const osrmLocal = "http://89.168.57.91:5000/route/v1";
+        // Define OSRM server URLs
+        const osrmStreetUrl = 'https://router.project-osrm.org/route/v1';
+        const osrmSatelliteUrl = 'http://89.168.57.91:5000/route/v1';
 
-        // Waypoints
-        let waypoints = [
-            L.latLng(48.8566, 2.3522), // Start in Paris
-            L.latLng(48.864716, 2.349014) // End at another point in Paris
-        ];
-
-        // Routing control
-        let routingControl;
-
-        function updateRouting(serverUrl) {
-            if (routingControl) {
-                map.removeControl(routingControl); // Remove existing routing control
-            }
-
-            routingControl = L.Routing.control({
-                waypoints: waypoints, // Use saved waypoints
+        // Function to create a Routing control
+        function createRoutingControl(serviceUrl) {
+            return L.Routing.control({
+                waypoints: [
+                    L.latLng(48.8566, 2.3522), // Start in Paris
+                    L.latLng(48.864716, 2.349014) // End at another point in Paris
+                ],
                 routeWhileDragging: true,
+                fitSelectedRoutes: true, // Ensure the map fits the route
                 router: new L.Routing.OSRMv1({
-                    serviceUrl: serverUrl
+                    serviceUrl: serviceUrl
                 })
             });
-
-            routingControl.on('waypointschanged', function (event) {
-                // Save the updated waypoints when user drags them
-                waypoints = event.waypoints.map(wp => wp.latLng);
-            });
-
-            routingControl.addTo(map);
         }
 
-        // Initialize with the local server
-        updateRouting(osrmLocal);
+        // Create the initial routing control using streets server
+        let routingControl = createRoutingControl(osrmStreetUrl);
+        routingControl.addTo(map);
 
-        // Listen to base layer changes
-        map.on('baselayerchange', function (event) {
-            if (event.name === "Streets") {
-                updateRouting(osrmLocal); // Use local OSRM server
-            } else if (event.name === "Satellite") {
-                updateRouting(osrmRemote); // Use remote OSRM server
-            }
+        // Listen for base layer changes
+        map.on('baselayerchange', function(e) {
+            const newServiceUrl = e.layer === streets ? osrmStreetUrl : osrmSatelliteUrl;
+
+            // Only update the router without removing the control
+            routingControl.getRouter().options.serviceUrl = newServiceUrl;
+
+            // Recalculate the route after changing the server
+            routingControl.route();
         });
+
     </script>
 </body>
 </html>
