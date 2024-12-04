@@ -138,6 +138,11 @@
             "Étage 2": layerEtage2
         };
 
+
+       
+
+
+
         L.control.layers(baseMaps, null, { collapsed: false }).addTo(map);
 
         // Activer un étage par défaut
@@ -266,19 +271,41 @@
         }
     });
 
+    // Define OSRM server URLs
+    const osrmStreetUrl = 'https://router.project-osrm.org/route/v1';
+    const osrmSatelliteUrl = 'http://89.168.57.91:5000/route/v1';
 
+        // Function to create a Routing control
+        function createRoutingControl(serviceUrl) {
+            return L.Routing.control({
+                waypoints: [
+                    L.latLng(45.93750966640477, 6.1329507734525395), // Start in Paris
+                    L.latLng(45.93728522718916, 6.1323422250561554) // End at another point in Paris
+                ],
+                routeWhileDragging: true,
+                fitSelectedRoutes: true, // Ensure the map fits the route
+                router: new L.Routing.OSRMv1({
+                    serviceUrl: serviceUrl
+                })
+            });
+        }
 
-    var start = L.latLng(45.93750966640477, 6.1329507734525395); 
-    var end = L.latLng(45.93728522718916, 6.1323422250561554);
+        // Create the initial routing control using streets server
+        let routingControl = createRoutingControl(osrmStreetUrl);
+        routingControl.addTo(map);
 
-    var routeControl = L.Routing.control({
-        waypoints: [start, end],
-        router: L.Routing.osrmv1({
-            serviceUrl: 'http://89.168.57.91:5000/route/v1', // URL de votre serveur OSRM local
-            useHints: false // Optionnel, dépend de votre configuration du serveur OSRM
-        }),
-        routeWhileDragging: true // Permet de déplacer les points en temps réel
-    }).addTo(map);
+        // Listen for base layer changes
+        map.on('baselayerchange', function(e) {
+            const newServiceUrl = e.layer === layerEtage1 ? osrmStreetUrl : osrmSatelliteUrl;
+
+            // Only update the router without removing the control
+            routingControl.getRouter().options.serviceUrl = newServiceUrl;
+
+            // Recalculate the route after changing the server
+            routingControl.route();
+        });
+    
+    
     </script>
 </body>
 </html>
