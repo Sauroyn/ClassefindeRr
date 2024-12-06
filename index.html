@@ -139,14 +139,7 @@
         };
 
 
-       
-
-
-
         L.control.layers(baseMaps, null, { collapsed: false }).addTo(map);
-
-        // Activer un étage par défaut
-        layerEtage1.addTo(map);
 
         // Variable pour suivre le calque actif
         var activeLayer = "Étage 1";
@@ -272,7 +265,7 @@
     });
 
     // Define OSRM server URLs
-    const osrmStreetUrl = 'https://router.project-osrm.org/route/v1';
+    const osrmStreetUrl = 'http://89.168.57.91:5001/route/v1';
     const osrmSatelliteUrl = 'http://89.168.57.91:5000/route/v1';
 
         // Function to create a Routing control
