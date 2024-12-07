@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Carte avec Leaflet et Routing avec OSRM</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Inclusion de la feuille de style Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- Inclusion du CSS pour Leaflet Routing Machine -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.1/dist/leaflet-routing-machine.css" />
+    <style>
+        #map {
+            height: 100vh; /* La carte occupe toute la hauteur de l'écran */
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Conteneur de la carte -->
+    <div id="map"></div>
+
+    <!-- Inclusion de la bibliothèque Leaflet -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Inclusion de la bibliothèque Leaflet Routing Machine -->
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.1/dist/leaflet-routing-machine.js"></script>
+    <!-- Inclusion de la bibliothèque Leaflet Control Geocoder -->
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+
+    <script>
+        // Initialisation de la carte
+        var map = L.map('map').setView([48.8566, 2.3522], 13);
+
+        // Ajout d'un fond de carte OpenStreetMap
+        var baseLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Variables pour stocker le calque actif (level1 ou level2)
+        var activeLayer = "level1"; // Par défaut, calque `level1`
+
+        // Définition des points de départ et d'arrivée pour l'itinéraire
+        var start = L.latLng(45.93750966640477, 6.1329507734525395);
+        var end = L.latLng(45.93728522718916, 6.1323422250561554);
+
+        // Configuration du routeur personnalisé
+        var customRouter = L.Routing.osrmv1({
+            serviceUrl: 'http://127.0.0.1:5000/route/v1',
+            useHints: false,
+        });
+
+        // Ajout du contrôle de routage avec le routeur personnalisé
+        var routeControl = L.Routing.control({
+            waypoints: [start, end],
+            router: customRouter,
+            routeWhileDragging: true
+        }).addTo(map);
+
+    </script>
+</body>
+</html>

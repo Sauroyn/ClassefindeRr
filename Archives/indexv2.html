@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carte avec SVG Interactif</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        #map { height: 100vh; width: 100%; }
+        svg { width: 100%; height: 100%; position: absolute; top: 0; left: 0; pointer-events: none; }
+        .interactive-element { fill: red; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    
+    <script>
+        // Initialisation de la carte
+        var map = L.map('map').setView([46.0285, 6.1114], 18); // Position initiale de la carte
+
+        // Calque OpenStreetMap
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Calibrage de la carte pour l'image fictive
+        var imageWidth = 1000;
+        var imageHeight = 1000;
+        var bounds = [
+            [46.0280, 6.1100], // Coin inférieur gauche
+            [46.0290, 6.1120]  // Coin supérieur droit
+        ];
+
+        // Charger une image (carte de fond)
+        var imageOverlay = L.imageOverlay('carte.jpg', bounds, {
+            opacity: 0.5
+        }).addTo(map);
+
+        // Créer un SVG interactif à l'intérieur de la carte
+        var svgLayer = L.svg().addTo(map);
+        var svg = d3.select(svgLayer.getPane()).append('svg');
+
+        // Créer un cercle vraiment grand
+        var interactiveElement = svg.append('circle')
+            .attr('class', 'interactive-element')
+            .attr('cx', map.latLngToContainerPoint([46.0285, 6.1114]).x) // Position du cercle sur la carte
+            .attr('cy', map.latLngToContainerPoint([46.0285, 6.1114]).y)
+            .attr('r', 100); // Un rayon plus grand (100 pixels)
+
+        // Interaction : Déplacer l'élément SVG avec la carte
+        map.on('move', function() {
+            var point = map.latLngToContainerPoint([46.0285, 6.1114]);
+            interactiveElement
+                .attr('cx', point.x)
+                .attr('cy', point.y);
+        });
+
+        // Interaction : Cliquer sur l'élément SVG pour changer sa couleur
+        interactiveElement.on('click', function() {
+            var currentColor = d3.select(this).style('fill');
+            var newColor = (currentColor === 'red' ? 'blue' : 'red');
+            d3.select(this).style('fill', newColor);
+        });
+
+        // Exemple de positionnement dynamique basé sur la géolocalisation utilisateur
+        navigator.geolocation.watchPosition(function(position) {
+            var userLat = position.coords.latitude;
+            var userLng = position.coords.longitude;
+
+            L.marker([userLat, userLng]).addTo(map)
+                .bindPopup("Votre position réelle")
+                .openPopup();
+        }, function(error) {
+            console.error("Erreur de géolocalisation : ", error);
+        });
+    </script>
+    
+    <!-- Inclusion de la bibliothèque D3.js pour manipuler les éléments SVG -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</body>
+</html>
