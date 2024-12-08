@@ -1,81 +1,91 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leaflet Map with Custom OSRM Servers</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.1/dist/leaflet-routing-machine.css" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <title>Carte Leaflet avec géocodage</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
     <style>
+        /* Style de la carte */
         #map {
             height: 100vh;
+            width: 100%;
+        }
+
+        /* Style du champ de recherche */
+        #geocode {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            background-color: white;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        #geocode input {
+            padding: 5px;
+            width: 200px;
+        }
+
+        #geocode button {
+            padding: 6px;
+            margin-left: 5px;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
     <div id="map"></div>
 
+    <div id="geocode">
+        <input type="text" id="searchBox" placeholder="Entrez une adresse">
+        <button onclick="geocodeAddress()">Rechercher</button>
+    </div>
+
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <script src="https://unpkg.com/leaflet-routing-machine@3.2.1/dist/leaflet-routing-machine.js"></script>
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
     <script>
-        // Initialize the map
-        const map = L.map('map').setView([48.8566, 2.3522], 13); // Centered on Paris
+        // Initialisation de la carte
+        const map = L.map('map').setView([48.8566, 2.3522], 13); // Coordonnées par défaut (Paris)
 
-        // Define base layers
-        const streets = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 30,
-            attribution: '&copy; OpenStreetMap contributors'
-        });
+        // Ajouter la couche de carte
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
 
-        const satellite = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-            maxZoom: 30,
-            attribution: '&copy; OpenTopoMap contributors'
-        });
+        // Fonction pour géocoder l'adresse entrée
+        function geocodeAddress() {
+            const address = document.getElementById('searchBox').value;
 
-        // Add default base layer
-        streets.addTo(map);
-
-        // Layer control
-        const baseMaps = {
-            "Streets": streets,
-            "Satellite": satellite
-        };
-
-        const layerControl = L.control.layers(baseMaps).addTo(map);
-
-        // Define OSRM server URLs
-        const osrmStreetUrl = 'https://router.project-osrm.org/route/v1';
-        const osrmSatelliteUrl = 'http://89.168.57.91:5000/route/v1';
-
-        // Function to create a Routing control
-        function createRoutingControl(serviceUrl) {
-            return L.Routing.control({
-                waypoints: [
-                    L.latLng(48.8566, 2.3522), // Start in Paris
-                    L.latLng(48.864716, 2.349014) // End at another point in Paris
-                ],
-                routeWhileDragging: true,
-                fitSelectedRoutes: true, // Ensure the map fits the route
-                router: new L.Routing.OSRMv1({
-                    serviceUrl: serviceUrl
-                })
-            });
+            if (address) {
+                // Utilisation de l'API de géocodage Nominatim (OpenStreetMap)
+                fetch(`http://89.168.57.91:8080/search?q=${encodeURIComponent(address)}&format=json&addressdetails=1`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.length > 0) {
+                            const lat = data[0].lat;
+                            const lon = data[0].lon;
+                            map.setView([lat, lon], 13); // Centrer la carte sur la position trouvée
+                            L.marker([lat, lon]).addTo(map)
+                                .bindPopup(`<b>${data[0].display_name}</b>`).openPopup(); // Afficher le lieu trouvé
+                        } else {
+                            alert("Adresse non trouvée.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Erreur lors du géocodage:", error);
+                    });
+            } else {
+                alert("Veuillez entrer une adresse.");
+            }
         }
 
-        // Create the initial routing control using streets server
-        let routingControl = createRoutingControl(osrmStreetUrl);
-        routingControl.addTo(map);
-
-        // Listen for base layer changes
-        map.on('baselayerchange', function(e) {
-            const newServiceUrl = e.layer === streets ? osrmStreetUrl : osrmSatelliteUrl;
-
-            // Only update the router without removing the control
-            routingControl.getRouter().options.serviceUrl = newServiceUrl;
-
-            // Recalculate the route after changing the server
-            routingControl.route();
-        });
+        // Optionnel : Ajouter un géocodeur de contrôle à la carte pour une recherche par adresse
+        L.Control.geocoder().addTo(map);
     </script>
 </body>
 </html>

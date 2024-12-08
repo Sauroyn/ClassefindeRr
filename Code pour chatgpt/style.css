@@ -1,0 +1,21 @@
+#map { height: 98vh; width: 100%; }
+
+.leaflet-control-custom {
+    background-color: white;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.leaflet-control-custom:hover {
+    background-color: #e0e0e0; /* Couleur légèrement assombrie au survol */
+}
+
+.leaflet-control-custom h1 {
+    margin: 0;
+    font-weight: bold;
+}

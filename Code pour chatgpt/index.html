@@ -3,21 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Lycée Louis Lachenal Geographier</title>
-    <!-- Inclusion du CSS pour Leaflet Routing Machine -->
+    <title>Classefinder</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.1/dist/leaflet-routing-machine.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-search@3.0.0/dist/leaflet-search.min.css" />
-    <style>
-        #map { height: 98vh; width: 100%; }
-    </style>
+    <link rel="stylesheet" href="style.css" />
 </head>
 <body>
     <div id="map"></div>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-search@3.0.0/dist/leaflet-search.min.js"></script>
     <script src="https://unpkg.com/leaflet-routing-machine@3.2.1/dist/leaflet-routing-machine.js"></script>
-
     <script>
         // Initialiser la carte
         var map = L.map('map').setView([45.9368, 6.1322], 18);
@@ -35,7 +31,6 @@
                 { "type": "Feature", "properties": { "salle": "13" }, "geometry": { "type": "Polygon", "coordinates": [ [ [ 6.132334706522989, 45.936869249988817 ], [ 6.132459398962017, 45.936864775625189 ], [ 6.132452046090921, 45.936795103345098 ], [ 6.132327047282264, 45.93680021690993 ], [ 6.132334706522989, 45.936869249988817 ] ] ] } },
             ]
         };
-
         var geojsonDataEtage2 = {
             "type": "FeatureCollection",
             "features": [
@@ -62,40 +57,25 @@
     };
 
     // Créer un nouveau contrôle pour réinitialiser la vue
-    var resetViewControl = L.Control.extend({
-        options: {
-            position: 'topleft' // Position du bouton (à côté des boutons de zoom)
-        },
+        var resetViewControl = L.Control.extend({
+            options: {
+                position: 'topleft' // Position du bouton (à côté des boutons de zoom)
+            },
 
-        onAdd: function(map) {
-            var container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
+            onAdd: function(map) {
+                var container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
 
-            // Style du bouton
-            container.style.backgroundColor = 'white';
-            container.style.width = '30px';
-            container.style.height = '30px';
-            container.style.cursor = 'pointer';
-            container.style.display = 'flex';
-            container.style.alignItems = 'center';
-            container.style.justifyContent = 'center';
-            container.innerHTML = '<h1><b>⟳</b></h1>'; // Symbole du bouton (vous pouvez le personnaliser)
-            container.title = "Recentrer"; 
+                container.innerHTML = '<h1><b>⟳</b></h1>'; // Symbole du bouton (vous pouvez le personnaliser)
+                container.title = "Recentrer";
 
-            container.onmouseover = function() {
-                container.style.backgroundColor = '#e0e0e0'; // Couleur légèrement assombrie
-            };
-            container.onmouseout = function() {
-                container.style.backgroundColor = 'white'; // Couleur d'origine
-            };
+                // Action lors du clic
+                container.onclick = function() {
+                    map.setView(initialView.center, initialView.zoom); // Revenir à la vue initiale
+                };
 
-            // Action lors du clic
-            container.onclick = function() {
-                map.setView(initialView.center, initialView.zoom); // Revenir à la vue initiale
-            };
-
-            return container;
-        }
-    });
+                return container;
+            }
+        });
 
     // Ajouter le bouton à la carte
     map.addControl(new resetViewControl());
@@ -208,6 +188,16 @@
         };
     }
 
+    // Variables pour mémoriser les waypoints des itinéraires par étage
+    let waypointsEtage1 = [];
+    let waypointsEtage2 = [];
+
+    let startMarker = null;  // Marqueur de départ
+let endMarker = null;    // Marqueur d'arrivée
+let waypoints = [];      // Waypoints pour le calcul d'itinéraire
+
+
+
     // Variable pour stocker la salle actuellement mise en évidence
     var highlightedLayer = null;
 
@@ -220,10 +210,10 @@
         marker: false,
         moveToLocation: function(latlng, title, map) {
     // Réinitialiser le style de la salle précédemment mise en évidence
-    if (highlightedLayer) {
-        highlightedLayer.setStyle(getDefaultStyle());
-        highlightedLayer = null;
-    }
+        if (highlightedLayer) {
+            highlightedLayer.setStyle(getDefaultStyle());
+            highlightedLayer = null;
+        }
 
     // Trouver le calque contenant la salle recherchée
     [layerEtage1, layerEtage2].forEach(function(layer, index) {
@@ -251,6 +241,8 @@
     });
 }
 
+
+
     });
 
     // Ajouter le contrôle de recherche à la carte
@@ -264,24 +256,60 @@
         }
     });
 
+
+    searchControl.on('search:locationfound', function(e) {
+    const destinationLatLng = e.latlng;
+
+    // Si le marqueur de départ n'est pas défini, on le place au centre de la carte (ou à la position actuelle)
+    if (!startMarker) {
+        startMarker = L.marker(map.getCenter()).addTo(map).bindPopup('Départ');
+    }
+
+    // Si le marqueur d'arrivée n'est pas défini, on le place à la destination trouvée
+    if (!endMarker) {
+        endMarker = L.marker(destinationLatLng).addTo(map).bindPopup('Arrivée');
+    } else {
+        // Si le marqueur d'arrivée existe, on met à jour sa position
+        endMarker.setLatLng(destinationLatLng);
+    }
+
+    // Mémoriser les waypoints pour le calcul de l'itinéraire
+    waypoints = [startMarker.getLatLng(), endMarker.getLatLng()];
+
+    // Mettre à jour l'itinéraire avec les waypoints
+    updateRouteForActiveLayer();
+});
+
+
+
+
+
+    // Réinitialisation après clic ailleurs
+    map.on('click', function() {
+        if (highlightedLayer) {
+            highlightedLayer.setStyle(getDefaultStyle());
+            highlightedLayer = null;
+        }
+    });
+
+
     // Define OSRM server URLs
     const osrmStreetUrl = 'http://89.168.57.91:5001/route/v1';
     const osrmSatelliteUrl = 'http://89.168.57.91:5000/route/v1';
 
         // Function to create a Routing control
-        function createRoutingControl(serviceUrl) {
-            return L.Routing.control({
-                waypoints: [
-                    L.latLng(45.93750966640477, 6.1329507734525395), // Start in Paris
-                    L.latLng(45.93728522718916, 6.1323422250561554) // End at another point in Paris
-                ],
-                routeWhileDragging: true,
-                fitSelectedRoutes: true, // Ensure the map fits the route
-                router: new L.Routing.OSRMv1({
-                    serviceUrl: serviceUrl
-                })
-            });
-        }
+// Fonction pour créer un contrôle d'itinéraire
+function createRoutingControl(serviceUrl, waypoints) {
+    return L.Routing.control({
+        waypoints: waypoints,  // Utilise les waypoints passés (mémorisés ou vides)
+        routeWhileDragging: false,
+        fitSelectedRoutes: true, // Assure que la carte ajuste l'itinéraire
+        router: new L.Routing.OSRMv1({
+            serviceUrl: serviceUrl
+        })
+    });
+}
+
 
         // Create the initial routing control using streets server
         let routingControl = createRoutingControl(osrmStreetUrl);
@@ -298,8 +326,104 @@
             routingControl.route();
         });
     
-    
-    </script>
+
+    // Gestionnaire pour la recherche de salle
+searchControl.on('search:locationfound', function(e) {
+    // Récupérer les coordonnées du point trouvé (le point de destination)
+    const destinationLatLng = e.latlng;
+
+    // Vérifier si un waypoint de départ est déjà mémorisé
+    const currentWaypoints = routingControl.getWaypoints();
+
+    // Si on n'a pas de waypoint de départ, on enregistre le point actuel
+    if (currentWaypoints.length === 0) {
+        // Mémoriser le waypoint de départ (initialement le point de l'utilisateur)
+        const startLatLng = currentWaypoints[0] ? currentWaypoints[0].latLng : map.getCenter();
+
+        // Mémoriser les waypoints dans les variables correspondantes
+        if (activeLayer === "Étage 1") {
+            waypointsEtage1 = [startLatLng, destinationLatLng]; // Enregistrer pour étage 1
+        } else if (activeLayer === "Étage 2") {
+            waypointsEtage2 = [startLatLng, destinationLatLng]; // Enregistrer pour étage 2
+        }
+    }
+
+    // Ajuster l'itinéraire avec le bon calque et les waypoints mémorisés
+    updateRouteForActiveLayer();
+});
+
+function updateRouteForActiveLayer() {
+    // Mettre à jour l'itinéraire avec les waypoints dynamiques
+    if (waypoints.length === 2) {
+        routingControl.setWaypoints(waypoints);
+    } else {
+        // Si les waypoints ne sont pas définis correctement, on les réinitialise
+        routingControl.setWaypoints([startMarker.getLatLng(), endMarker.getLatLng()]);
+    }
+}
+
+
+
+
+        // Trouver la salle correspondante et mettre à jour l'itinéraire
+        [layerEtage1, layerEtage2].forEach(function(layer, index) {
+            layer.eachLayer(function(featureLayer) {
+                if (featureLayer.feature && featureLayer.feature.properties.salle === e.text) {
+                    // Mise en évidence de la salle
+                    highlightedLayer = featureLayer;
+                    featureLayer.setStyle(getHighlightStyle());
+                    map.fitBounds(featureLayer.getBounds());
+
+                    // Mettre à jour les waypoints de l'itinéraire
+                    const salleBounds = featureLayer.getBounds();
+                    const salleLatLng = salleBounds.getCenter(); // Centre de la salle comme destination
+
+                    routingControl.setWaypoints([
+                        routingControl.getWaypoints()[0].latLng, // Point de départ actuel
+                        salleLatLng // Nouvelle destination
+                    ]);
+
+                    // Activer le calque correspondant
+                    const layerName = index === 0 ? "Étage 1" : "Étage 2";
+                    if (activeLayer !== layerName) {
+                        map.removeLayer(layerEtage1);
+                        map.removeLayer(layerEtage2);
+                        if (layerName === "Étage 1") {
+                            layerEtage1.addTo(map);
+                        } else if (layerName === "Étage 2") {
+                            layerEtage2.addTo(map);
+                        }
+                        activeLayer = layerName; // Mettre à jour le calque actif
+                    }
+                }
+            });
+        });
+
+    // Réinitialisation après clic ailleurs
+    map.on('click', function() {
+        if (highlightedLayer) {
+            highlightedLayer.setStyle(getDefaultStyle());
+            highlightedLayer = null;
+        }
+    });
+
+
+    map.on('baselayerchange', function(e) {
+    const newServiceUrl = e.layer === layerEtage1 ? osrmStreetUrl : osrmSatelliteUrl;
+
+    // Mettre à jour les waypoints et les marqueurs pour le nouvel étage
+    updateRouteForActiveLayer();  // Réinitialiser l'itinéraire avec les nouveaux waypoints
+
+    // Changer le serveur de calcul de l'itinéraire (selon le calque sélectionné)
+    routingControl.getRouter().options.serviceUrl = newServiceUrl;
+
+    // Recalculer l'itinéraire
+    routingControl.route();
+});
+
+
+</script>
+
     
 </body>
 </html>
