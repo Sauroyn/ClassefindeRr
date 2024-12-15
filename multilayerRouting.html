@@ -8,9 +8,6 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-search@3.0.0/dist/leaflet-search.min.css" />
     <style>
-        body {
-            margin: 0;
-        }
         #map { height: 100vh; }
     </style>
 </head>
@@ -44,71 +41,38 @@
             ]
         };
 
-        // Fonction pour styliser les polygones
-        const getDefaultStyle = () => ({ className: 'geojson-polygon' });
+        let currentMarkers = [];
+        let currentLayer;
 
-        // Gestion des calques GeoJSON
-        const layerEtage1 = L.geoJSON(geojsonDataEtage1, { style: getDefaultStyle });
-        const layerEtage2 = L.geoJSON(geojsonDataEtage2, { style: getDefaultStyle });
+        function clearMarkers() {
+            currentMarkers.forEach(marker => map.removeLayer(marker));
+            currentMarkers = [];
+        }
 
-        const baseMaps = {
-            "Étage 1": layerEtage1,
-            "Étage 2": layerEtage2
-        };
+        function addMarkers(geojsonData) {
+            clearMarkers();
+            currentLayer = L.geoJSON(geojsonData, {
+                onEachFeature: function (feature, layer) {
+                    const marker = L.marker(layer.getBounds().getCenter()).addTo(map);
+                    currentMarkers.push(marker);
+                }
+            }).addTo(map);
+        }
 
-        L.control.layers(baseMaps, null, { collapsed: false }).addTo(map);
+        // Initial display of markers for the first floor
+        addMarkers(geojsonDataEtage1);
 
-        // Gestion des calques actifs
-        let activeLayer = "Étage 1";
-        map.on('baselayerchange', (e) => activeLayer = e.name);
-
-        // Contrôle de recherche
-        const searchControl = new L.Control.Search({
-            layer: L.layerGroup([layerEtage1, layerEtage2]),
-            propertyName: 'salle',
-            initial: false,
-            zoom: 21,
-            marker: false,
-            moveToLocation(latlng, title, map) {
-                const layers = [layerEtage1, layerEtage2];
-                layers.forEach((layer, index) => {
-                    layer.eachLayer((featureLayer) => {
-                        if (featureLayer.feature.properties.salle === title) {
-                            map.fitBounds(featureLayer.getBounds());
-                            if (activeLayer !== (index === 0 ? "Étage 1" : "Étage 2")) {
-                                map.removeLayer(layerEtage1);
-                                map.removeLayer(layerEtage2);
-                                (index === 0 ? layerEtage1 : layerEtage2).addTo(map);
-                                activeLayer = index === 0 ? "Étage 1" : "Étage 2";
-                            }
-                        }
-                    });
-                });
+        // Function to switch floors
+        function switchFloor(floor) {
+            if (floor === 1) {
+                addMarkers(geojsonDataEtage1);
+            } else if (floor === 2) {
+                addMarkers(geojsonDataEtage2);
             }
-        });
-        map.addControl(searchControl);
+        }
 
-        // OSRM Routing
-        const osrmStreetUrl = 'http://89.168.57.91:5001/route/v1';
-        const osrmSatelliteUrl = 'http://89.168.57.91:5000/route/v1';
-
-        const createRoutingControl = (serviceUrl) => L.Routing.control({
-            waypoints: [
-                L.latLng(45.93750966640477, 6.1329507734525395),
-                L.latLng(45.93728522718916, 6.1323422250561554)
-            ],
-            routeWhileDragging: true,
-            router: new L.Routing.OSRMv1({ serviceUrl })
-        });
-
-        let routingControl = createRoutingControl(osrmStreetUrl);
-        routingControl.addTo(map);
-
-        map.on('baselayerchange', (e) => {
-            const newServiceUrl = e.name === "Étage 1" ? osrmStreetUrl : osrmSatelliteUrl;
-            routingControl.getRouter().options.serviceUrl = newServiceUrl;
-            routingControl.route();
-        });
+        // Example of switching floors
+        setTimeout(() => switchFloor(2), 5000); // Switch to floor 2 after 5 seconds
     </script>
 </body>
 </html>

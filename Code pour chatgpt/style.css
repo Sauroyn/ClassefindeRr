@@ -1,6 +1,20 @@
-#map { height: 98vh; width: 100%; }
+/* Style de la carte */
+#map {
+    height: 98vh;
+    width: 100%;
+}
 
-.leaflet-control-custom {
+/* Style des polygones GeoJSON */
+.geojson-polygon {
+    stroke: #16a34a; /* Bordure verte */
+    stroke-width: 2;
+    stroke-opacity: 1;
+    fill: #22c55e; /* Remplissage vert clair */
+    fill-opacity: 0.4;
+}
+
+/* Style du bouton de réinitialisation */
+.reset-view-button {
     background-color: white;
     width: 30px;
     height: 30px;
@@ -8,14 +22,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    text-align: center;
-}
-
-.leaflet-control-custom:hover {
-    background-color: #e0e0e0; /* Couleur légèrement assombrie au survol */
-}
-
-.leaflet-control-custom h1 {
-    margin: 0;
     font-weight: bold;
+    font-size: 16px;
+}
+
+.reset-view-button:hover {
+    background-color: #e0e0e0; /* Couleur légèrement assombrie */
 }

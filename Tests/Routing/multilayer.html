@@ -44,15 +44,15 @@
         const layerControl = L.control.layers(baseMaps).addTo(map);
 
         // Define OSRM server URLs
-        const osrmStreetUrl = 'https://router.project-osrm.org/route/v1';
+        const osrmStreetUrl = 'http://89.168.57.91:5001/route/v1';
         const osrmSatelliteUrl = 'http://89.168.57.91:5000/route/v1';
 
         // Function to create a Routing control
         function createRoutingControl(serviceUrl) {
             return L.Routing.control({
                 waypoints: [
-                    L.latLng(48.8566, 2.3522), // Start in Paris
-                    L.latLng(48.864716, 2.349014) // End at another point in Paris
+                    L.latLng(45.93750966640477, 6.1329507734525395), // Start in Paris
+                    L.latLng(45.93728522718916, 6.1323422250561554) // End at another point in Paris
                 ],
                 routeWhileDragging: true,
                 fitSelectedRoutes: true, // Ensure the map fits the route
