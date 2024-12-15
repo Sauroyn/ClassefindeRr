@@ -1,0 +1,82 @@
+.leaflet-control-zoom {
+    position: fixed;
+    bottom: 20px; /* Distance depuis le bas */
+    right: 20px;  /* Distance depuis la droite */
+}
+.leaflet-control-search {
+display: flex; /* Aligne le champ de recherche et le bouton sur une seule ligne */
+width: 200%; /* Utilise toute la largeur disponible */
+max-width: none; /* Désactive la limite par défaut de la largeur */
+box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2); /* Ajoute une légère ombre pour une esthétique moderne */
+border-radius: 300px; /* Ajoute des coins arrondis */
+}
+
+.leaflet-control-search .search-input {
+flex: 1; /* Le champ de recherche occupe tout l'espace disponible */
+font-size: 16px; /* Augmente la taille du texte */
+padding: 12px; /* Augmente l'espace intérieur */
+border: none; /* Supprime les bordures */
+border-top-left-radius: 8px; /* Coin arrondi en haut à gauche */
+border-bottom-left-radius: 8px; /* Coin arrondi en bas à gauche */
+}
+
+.leaflet-control-search .search-button {
+
+display: flex; /* Centrer l'icône dans le bouton */
+align-items: center; /* Centrer verticalement */
+justify-content: center; /* Centrer horizontalement */
+background: #ffffff; /* Ajoute une couleur de fond moderne (bleu par exemple) */
+color: rgb(0, 0, 0); /* Icône blanche */
+font-size: 20px; /* Agrandit l'icône */
+border: none; /* Supprime les bordures */
+border-top-right-radius: 8px; /* Coin arrondi en haut à droite */
+border-bottom-right-radius: 8px; /* Coin arrondi en bas à droite */
+cursor: pointer; /* Change le curseur en pointeur sur le bouton */
+}
+.leaflet-control-search .search-button {
+width: 50px; /* Définit une largeur fixe pour le bouton */
+height: 50px; /* Définit une hauteur fixe pour le bouton */
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 20px; /* Taille de l'icône */
+color: rgb(94, 181, 207); /* Couleur de l'icône */
+}
+
+.leaflet-control-search .search-button:hover {
+background: #a8a8a8; /* Change la couleur au survol pour un effet interactif */
+}
+.leaflet-control-search .search-button:before {
+    content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black"><path d="M15.5 14h-.79l-.28-.27a6.518 6.518 0 001.48-5.34C15.11 5.52 12.52 3 9.5 3S3.89 5.52 3.89 8.5 6.48 14 9.5 14c1.61 0 3.09-.59 4.23-1.56l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>');
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+}
+
+/* Ajuste le conteneur du champ de recherche */
+.leaflet-control-search .search-input {
+    padding-right: 40px; /* Laisse de l'espace pour la croix à droite */
+    position: relative;
+}
+
+/* Stylise la croix pour qu'elle soit dans la zone de texte */
+.leaflet-control-search .search-cancel {
+    position: relative;
+    right: 30px; /* Distance entre la croix et le bord droit de la zone de texte */
+    top: 50%; /* Centre verticalement la croix */
+    transform: translateY(50%); /* Ajuste précisément le centrage */
+    width: 16px; /* Ajuste la taille de la croix */
+    height: 16px;
+    cursor: pointer; /* Indique que la croix est cliquable */
+
+}
+
+/* Change la couleur de la croix au survol */
+.leaflet-control-search .search-cancel:hover {
+    color: #ff0000; /* Couleur noire pour indiquer un survol */
+}
+
+/* Assure que le conteneur du champ est bien positionné */
+.leaflet-control-search {
+    position: fixed;
+}
