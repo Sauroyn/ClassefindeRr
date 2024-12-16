@@ -7,14 +7,12 @@
     <!-- Inclusion du CSS pour Leaflet Routing Machine -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.1/dist/leaflet-routing-machine.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet-search@3.0.0/dist/leaflet-search.min.css" />
-    <link rel="stylesheet" href="style.css" />
+    <!--link rel="stylesheet" href="style.css" /-->
     <style>
         body {
             margin: 0;
         }
         #map { height: 100vh; width: 100%; }
-        
     </style>
 </head>
 <body>
@@ -266,41 +264,6 @@
         }
     });
 
-    // Define OSRM server URLs
-    const osrmStreetUrl = 'http://89.168.57.91:5001/route/v1';
-    const osrmSatelliteUrl = 'http://89.168.57.91:5000/route/v1';
-
-        // Function to create a Routing control
-        function createRoutingControl(serviceUrl) {
-            return L.Routing.control({
-                waypoints: [
-                    L.latLng(45.93750966640477, 6.1329507734525395), // Start in Paris
-                    L.latLng(45.93728522718916, 6.1323422250561554) // End at another point in Paris
-                ],
-                routeWhileDragging: true,
-                fitSelectedRoutes: true, // Ensure the map fits the route
-                router: new L.Routing.OSRMv1({
-                    serviceUrl: serviceUrl
-                })
-            });
-        }
-
-        // Create the initial routing control using streets server
-        let routingControl = createRoutingControl(osrmStreetUrl);
-        routingControl.addTo(map);
-
-        // Listen for base layer changes
-        map.on('baselayerchange', function(e) {
-            const newServiceUrl = e.layer === layerEtage1 ? osrmStreetUrl : osrmSatelliteUrl;
-
-            // Only update the router without removing the control
-            routingControl.getRouter().options.serviceUrl = newServiceUrl;
-
-            // Recalculate the route after changing the server
-            routingControl.route();
-        });
-    
-    
     </script>
     
 </body>
