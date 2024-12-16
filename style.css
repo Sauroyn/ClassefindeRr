@@ -8,49 +8,63 @@
 
 /* Style général de la barre de recherche */
 .leaflet-control-search {
-    background-color: #f8f9fa; /* Couleur de fond */
-    border: 2px solid #343a40; /* Bordure */
-    border-radius: 8px; /* Coins arrondis */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Ombre */
-    padding: 8px; /* Espacement interne */
+    position: relative; /* Position relative pour z-index */
+    z-index: 100000; /* Z-index très élevé pour priorité d'affichage */
+    background-color: #5FA199; /* Couleur de fond */
+    border: 2px solid #9BD0C9; /* Bordure */
+    border-radius: 300px; /* Coins arrondis */
+    box-shadow: 0 24px 24px rgba(0, 0, 0, 0.274); /* Ombre */
+    padding: 0px; /* Espacement interne */
     font-family: 'Arial', sans-serif; /* Police */
-    color: #495057; /* Couleur du texte */
+    color: #000000; /* Couleur du texte */
     display: flex; /* Aligner les éléments sur une ligne */
     align-items: center; /* Centrer verticalement */
-    gap: 8px; /* Espacement entre les éléments */
+    gap: 0px; /* Espacement entre les éléments */
+}
+
+/* Classe pour la couleur de fond personnalisée */
+.leaflet-control-search input.custom-bg-color {
+    background-color: #FFD700; /* Exemple de couleur de fond personnalisée (or) */
 }
 
 /* Style du champ de saisie */
 .leaflet-control-search input {
-    width: 200px; /* Largeur du champ de texte */
+    width: 300px; /* Largeur du champ de texte */
     height: 30px; /* Hauteur */
-    border: 1px solid #6c757d; /* Bordure */
-    border-radius: 5px; /* Coins arrondis */
-    padding: 5px; /* Espacement interne */
+    border: 0px solid #6c757d; /* Bordure */
+    border-radius: 300px; /* Coins arrondis */
+    padding: 10px; /* Espacement interne */
     font-size: 14px; /* Taille de la police */
     color: #212529; /* Couleur du texte */
+    background-color: #5FA199; /* Couleur de fond */
+}
+
+/* Supprimer le contour par défaut au focus */
+.leaflet-control-search input:focus {
+    outline: none; /* Désactive le contour */
+    box-shadow: none; /* Supprime l'ombre portée éventuelle */
+    border: none; /* Supprime les bordures */
 }
 
 /* Placeholder (texte par défaut) */
 .leaflet-control-search input::placeholder {
-    color: #adb5bd; /* Couleur du placeholder */
+    color: #000000; /* Couleur du placeholder */
     font-style: italic; /* Italique */
 }
 
-/* Bouton de recherche (loupe) */
 .leaflet-control-search .search-button {
-    background-color: #343a40; /* Couleur de fond du bouton */
-    color: #ffffff; /* Couleur de l'icône */
+    background-color: #5FA199; /* Couleur de fond du bouton */
+    background: url('./images/search-icon.png') no-repeat center center; /* Chemin relatif vers l'icône de recherche */
+    background-size: 70%; /* Ajuster la taille de l'icône */
     border: none; /* Pas de bordure */
     border-radius: 50%; /* Rond */
-    width: 30px; /* Taille */
-    height: 30px; /* Taille */
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer; /* Curseur pointeur */
     transition: background-color 0.3s; /* Transition sur le survol */
-    font-size: 16px; /* Taille de l'icône */
+    width: 50px; /* Taille du bouton */
+    height: 50px; /* Taille du bouton */
 }
 
 /* Bouton survolé */
@@ -60,19 +74,21 @@
 
 /* Bouton pour effacer la recherche (croix) */
 .leaflet-control-search .search-cancel {
-    background-color: #dc3545; /* Couleur de fond pour la croix */
-    color: #ffffff; /* Couleur de l'icône */
+    background-color: #5FA199; /* Couleur de fond pour la croix */
+    background: url('./images/cancel-icon.png') no-repeat center center; /* Chemin relatif vers votre icône personnalisée */
+    background-size: 70%; /* Ajuster la taille de l'icône */
     border: none; /* Pas de bordure */
     border-radius: 50%; /* Rond */
-    width: 20px; /* Taille */
-    height: 20px; /* Taille */
+    width: 50px; /* Taille */
+    height: 50px; /* Taille */
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer; /* Curseur pointeur */
-    font-size: 12px; /* Taille de l'icône */
     position: absolute; /* Position absolue pour ajustement */
-    right: 40px; /* Alignement à droite */
+    right: 50px; /* Alignement à droite */
+    color: transparent; /* Rendre la couleur de l'icône de base transparente */
+    font-size: 0; /* Taille de l'icône à 0 pour masquer l'icône de base */
 }
 
 /* Bouton croix survolé */
@@ -82,7 +98,7 @@
 
 /* Résultats de la recherche */
 .leaflet-control-search .search-tooltip {
-    background-color: #ffffff; /* Couleur de fond */
+    background-color: #5FA199; /* Couleur de fond */
     border: 1px solid #6c757d; /* Bordure */
     border-radius: 5px; /* Coins arrondis */
     padding: 5px; /* Espacement interne */
@@ -113,6 +129,13 @@
 
 /* Icône de recherche */
 .leaflet-control-search .search-icon {
-    color: #ffffff; /* Couleur de l'icône */
+    color: #5FA199; /* Couleur de l'icône */
     font-size: 16px; /* Taille de l'icône */
+}
+
+@media (max-width: 600px), (hover: none) and (pointer: coarse) {
+    .leaflet-control-search input {
+        width: 4000px; /* Prendre toute la largeur */
+        box-sizing: border-box;  /* Inclure le padding et la bordure dans la largeur totale */
+    }
 }

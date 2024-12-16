@@ -7,7 +7,7 @@
     <!-- Inclusion du CSS pour Leaflet Routing Machine -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.1/dist/leaflet-routing-machine.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <!--link rel="stylesheet" href="style.css" /-->
+    <link rel="stylesheet" href="style.css" />
     <style>
         body {
             margin: 0;
@@ -218,6 +218,7 @@
         collapsed: false, // Développer la barre de recherche par défaut
         zoom: 21, // Niveau de zoom lors de la recherche d'une salle
         marker: false,
+        autocomplete: true,
         moveToLocation: function(latlng, title, map) {
     // Réinitialiser le style de la salle précédemment mise en évidence
     if (highlightedLayer) {
