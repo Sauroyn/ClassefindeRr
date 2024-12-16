@@ -1,0 +1,109 @@
+body {
+    margin: 0;
+}
+
+#map {
+    height: 100vh;
+    width: 100%;
+}
+
+/* Style pour le contrôle des couches */
+.leaflet-control-layers {
+    background-color: rgba(255, 255, 255, 0.8); /* Fond semi-transparent pour le contrôle des couches */
+    border-radius: 5px;  /* Coins arrondis */
+    padding: 10px; /* Espacement autour du contrôle */
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2); /* Ombre douce autour du contrôle */
+}
+
+/* Style pour les étiquettes des calques */
+.leaflet-control-layers label {
+    font-size: 14px;
+    font-weight: bold;
+    color: #333; /* Couleur de texte pour les étiquettes */
+}
+
+/* Style pour les boutons des calques (cases à cocher) */
+.leaflet-control-layers input[type="checkbox"] {
+    margin-right: 10px; /* Espacement entre la case et le texte */
+}
+
+/* Style pour le contrôle des calques lorsque celui-ci est ouvert (non replié) */
+.leaflet-control-layers-expanded {
+    width: 250px; /* Largeur du contrôle quand il est étendu */
+}
+
+/* Style pour les couches GeoJSON spécifiques */
+
+/* Style pour l'étage 1 */
+.geojson-etage1 {
+    color: #3498db; /* Bleu pour l'étage 1 */
+    opacity: 0.7;
+}
+
+/* Style pour l'étage 2 */
+.geojson-etage2 {
+    color: #e74c3c; /* Rouge pour l'étage 2 */
+    opacity: 0.7;
+}
+
+/* Style pour les éléments de la couche lorsqu'ils sont survolés */
+.leaflet-interactive:hover {
+    fill-opacity: 0.6;
+    cursor: pointer;
+}
+
+/* Style de l'élément actif (lorsque sélectionné sur la carte) */
+.leaflet-interactive.selected {
+    fill-opacity: 1;
+    stroke: #2ecc71; /* Couleur verte pour l'élément sélectionné */
+    weight: 3; /* Augmenter l'épaisseur du contour */
+}
+
+
+
+
+.leaflet-tooltip-custom {
+    font-size: 14px;
+    color: black;
+    background-color: rgb(255, 255, 255);
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 2px 5px;
+}
+
+.leaflet-bar.leaflet-control-custom {
+    background-color: rgb(255, 255, 255);
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+/* Personnalisation du popup */
+.leaflet-popup-content {
+    font-size: 14px;
+    color: #333;
+    font-weight: bold;
+}
+
+/* Si tu veux personnaliser l'apparence du marqueur */
+.leaflet-marker-icon {
+    background-color: #15803d; /* Exemple de couleur de fond pour le marqueur */
+    border-radius: 50%;  /* Optionnel : si tu veux un marqueur rond */
+}
+
+/* Style pour les cercles créés par Leaflet (s'ils ont une classe spécifique, par exemple) */
+.leaflet-interactive {
+    border-radius: 50%;  /* Optionnel : si tu veux des cercles parfaitement ronds */
+}
+
+/* Pour personnaliser la couleur et l'apparence du cercle */
+.leaflet-circle {
+    stroke: #15803d; /* La couleur du bord du cercle */
+    fill: #16a34a;   /* La couleur de remplissage du cercle */
+    fill-opacity: 0.2;
+}
+
