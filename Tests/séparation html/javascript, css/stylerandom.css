@@ -7,79 +7,29 @@ body {
     width: 100%;
 }
 
-/* Style pour le contrôle des couches */
-.leaflet-control-layers {
-    background-color: rgba(255, 255, 255, 0.8); /* Fond semi-transparent pour le contrôle des couches */
-    border-radius: 5px;  /* Coins arrondis */
-    padding: 10px; /* Espacement autour du contrôle */
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2); /* Ombre douce autour du contrôle */
-}
-
-/* Style pour les étiquettes des calques */
-.leaflet-control-layers label {
-    font-size: 14px;
-    font-weight: bold;
-    color: #333; /* Couleur de texte pour les étiquettes */
-}
-
-/* Style pour les boutons des calques (cases à cocher) */
-.leaflet-control-layers input[type="checkbox"] {
-    margin-right: 10px; /* Espacement entre la case et le texte */
-}
-
-/* Style pour le contrôle des calques lorsque celui-ci est ouvert (non replié) */
-.leaflet-control-layers-expanded {
-    width: 250px; /* Largeur du contrôle quand il est étendu */
-}
-
-/* Style pour les couches GeoJSON spécifiques */
-
-/* Style pour l'étage 1 */
-.geojson-etage1 {
-    color: #3498db; /* Bleu pour l'étage 1 */
-    opacity: 0.7;
-}
-
-/* Style pour l'étage 2 */
-.geojson-etage2 {
-    color: #e74c3c; /* Rouge pour l'étage 2 */
-    opacity: 0.7;
-}
-
 /* Style pour les éléments de la couche lorsqu'ils sont survolés */
 .leaflet-interactive:hover {
-    fill-opacity: 0.6;
+    fill-opacity: 0.7;
     cursor: pointer;
 }
 
 /* Style de l'élément actif (lorsque sélectionné sur la carte) */
 .leaflet-interactive.selected {
     fill-opacity: 1;
-    stroke: #2ecc71; /* Couleur verte pour l'élément sélectionné */
-    weight: 3; /* Augmenter l'épaisseur du contour */
+    stroke: #017732; /* Couleur verte pour l'élément sélectionné */
 }
 
-
-
-
+/*label pour aficher les salle */
 .leaflet-tooltip-custom {
     font-size: 14px;
-    color: black;
+    color: rgb(0, 0, 0);
     background-color: rgb(255, 255, 255);
     border: 1px solid #ddd;
-    border-radius: 5px;
+    border-radius: 15px;
     padding: 2px 5px;
 }
 
-.leaflet-bar.leaflet-control-custom {
-    background-color: rgb(255, 255, 255);
-    width: 30px;
-    height: 30px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+
 
 
 /* Personnalisation du popup */
@@ -87,12 +37,6 @@ body {
     font-size: 14px;
     color: #333;
     font-weight: bold;
-}
-
-/* Si tu veux personnaliser l'apparence du marqueur */
-.leaflet-marker-icon {
-    background-color: #15803d; /* Exemple de couleur de fond pour le marqueur */
-    border-radius: 50%;  /* Optionnel : si tu veux un marqueur rond */
 }
 
 /* Style pour les cercles créés par Leaflet (s'ils ont une classe spécifique, par exemple) */
@@ -104,6 +48,149 @@ body {
 .leaflet-circle {
     stroke: #15803d; /* La couleur du bord du cercle */
     fill: #16a34a;   /* La couleur de remplissage du cercle */
-    fill-opacity: 0.2;
+    fill-opacity: 0.4;
 }
 
+.leaflet-control-zoom {
+    position: fixed;
+    bottom: 20px; /* Distance depuis le bas */
+    right: 20px;  /* Distance depuis la droite */
+}
+
+/* Style général de la barre de recherche */
+.leaflet-control-search {
+    position: relative;
+    background-color: #5FA199; /* Couleur de fond */
+    border: 2px solid #9BD0C9; /* Bordure */
+    border-radius: 300px; /* Coins arrondis */
+    box-shadow: 0 24px 24px rgba(0, 0, 0, 0.274); /* Ombre */
+    padding: 0px; /* Espacement interne */
+    font-family: 'Arial', sans-serif; /* Police */
+    color: #000000; /* Couleur du texte */
+    display: flex; /* Aligner les éléments sur une ligne */
+    align-items: center; /* Centrer verticalement */
+    gap: 0px; /* Espacement entre les éléments */
+}
+
+/* Style du champ de saisie */
+.leaflet-control-search input {
+    width: 300px; /* Largeur du champ de texte */
+    height: 30px; /* Hauteur */
+    border: 0px solid #6c757d; /* Bordure */
+    border-radius: 300px; /* Coins arrondis */
+    padding: 10px; /* Espacement interne */
+    font-size: 14px; /* Taille de la police */
+    color: #212529; /* Couleur du texte */
+    background-color: #5FA199; /* Couleur de fond */
+}
+
+/* Supprimer le contour par défaut au focus */
+.leaflet-control-search input:focus {
+    outline: none; /* Désactive le contour */
+    box-shadow: none; /* Supprime l'ombre portée éventuelle */
+    border: none; /* Supprime les bordures */
+}
+
+/* Placeholder (texte par défaut) */
+.leaflet-control-search input::placeholder {
+    color: #000000; /* Couleur du placeholder */
+    font-style: italic; /* Italique */
+}
+
+.leaflet-control-search .search-button {
+    background-color: #5FA199; /* Couleur de fond du bouton */
+    background: url('./images/search-icon.png') no-repeat center center; /* Chemin relatif vers l'icône de recherche */
+    background-size: 70%; /* Ajuster la taille de l'icône */
+    border: none; /* Pas de bordure */
+    border-radius: 50%; /* Rond */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer; /* Curseur pointeur */
+    transition: background-color 0.3s; /* Transition sur le survol */
+    width: 50px; /* Taille du bouton */
+    height: 50px; /* Taille du bouton */
+}
+
+/* Bouton survolé */
+.leaflet-control-search .search-button:hover {
+    background-color: #73CBC0; /* Changement de couleur au survol */
+}
+
+/* Bouton pour effacer la recherche (croix) */
+.leaflet-control-search .search-cancel {
+    background-color: #5FA199; /* Couleur de fond pour la croix */
+    background: url('./images/cancel-icon.png') no-repeat center center; /* Chemin relatif vers votre icône personnalisée */
+    background-size: 70%; /* Ajuster la taille de l'icône */
+    border: none; /* Pas de bordure */
+    border-radius: 50%; /* Rond */
+    width: 50px; /* Taille */
+    height: 50px; /* Taille */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer; /* Curseur pointeur */
+    position: absolute; /* Position absolue pour ajustement */
+    right: 50px; /* Alignement à droite */
+    color: transparent; /* Rendre la couleur de l'icône de base transparente */
+    font-size: 0; /* Taille de l'icône à 0 pour masquer l'icône de base */
+}
+
+/* Bouton croix survolé */
+.leaflet-control-search .search-cancel:hover {
+    background-color: #cb7373; /* Couleur au survol */
+}
+
+/* Résultats de la recherche */
+.leaflet-control-search .search-tooltip {
+    width: 300px; /* Largeur du champ de texte */
+    background-color: #5FA199; /* Couleur de fond */
+    border: 2px solid #9BD0C9; /* Bordure */
+    border-radius: 15px; /* Coins arrondis */
+    padding: 5px; /* Espacement interne */
+    color: #212529; /* Couleur du texte */
+    font-size: 14px; /* Taille de la police */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Ombre */
+    position: absolute; /* Position absolue pour éviter le chevauchement */
+    top: 100%; /* En dessous de la barre de recherche */
+    position: absolute; /* Position absolue */
+    box-sizing: border-box;  /* Inclure le padding et la bordure dans la largeur totale */
+}
+
+/* Résultat survolé */
+.leaflet-control-search .search-tooltip li {
+    padding: 0px; /* Espacement des items */
+    cursor: pointer; /* Curseur pointeur */
+}
+
+.leaflet-control-search .search-tooltip li:hover {
+    background-color: #e9ecef; /* Couleur de fond au survol */
+    color: #495057; /* Couleur du texte */
+}
+
+/* Texte des résultats */
+.leaflet-control-search .search-tooltip li span {
+    font-weight: bold; /* Texte en gras */
+}
+
+/* Icône de recherche */
+.leaflet-control-search .search-icon {
+    color: #5FA199; /* Couleur de l'icône */
+    font-size: 16px; /* Taille de l'icône */
+}
+
+
+.leaflet-control-search .search-tooltip {
+    list-style-type: none; /* Supprime les puces de la liste */
+    padding-left: 10px; /* Supprime le padding gauche */
+}
+
+.leaflet-control-layers {
+    background-color: #5FA199; /* Fond semi-transparent pour le contrôle des couches */
+    border-radius: 15px;  /* Coins arrondis */
+    border: 2px solid #9BD0C9 !important; /* Utilisation de la couleur RGBA pour la bordure avec !important */
+    padding: 10px; /* Espacement autour du contrôle */
+    padding-right: 20px;
+    position: relative; /* Position absolue */
+    box-shadow: 0px 0px 10px rgba(255, 0, 0, 0.2); /* Ombre douce autour du contrôle */
+}

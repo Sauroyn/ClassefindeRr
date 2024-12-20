@@ -40,8 +40,6 @@ var initialView = {
     zoom: 18
 };
 
-
-
 // Fonction d'interaction (survol et clic)
 function onEachFeature(feature, layer) {
     var tooltip = L.tooltip({
@@ -69,17 +67,20 @@ function onEachFeature(feature, layer) {
 var layerEtage1 = L.geoJSON(geojsonDataEtage1, { 
     style: getDefaultStyle, 
     onEachFeature: onEachFeature,
-    className: 'geojson-etage1'  // Ajoute une classe CSS pour l'étage 1
 });
 
 var layerEtage2 = L.geoJSON(geojsonDataEtage2, { 
     style: getDefaultStyle, 
     onEachFeature: onEachFeature,
-    className: 'geojson-etage2'  // Ajoute une classe CSS pour l'étage 2
 });
 
 var baseMaps = { "Étage 1": layerEtage1, "Étage 2": layerEtage2 };
-L.control.layers(baseMaps, null, { collapsed: false }).addTo(map);
+
+
+L.control.layers(baseMaps, null, { 
+    collapsed: false,
+}).addTo(map, true);
+// Ajouter un contrôle des calques avec position personnalisée
 
 // Ajouter les couches sur la carte
 layerEtage1.addTo(map);
@@ -141,8 +142,9 @@ function getHighlightStyle() {
 var searchControl = new L.Control.Search({
     layer: L.layerGroup([layerEtage1, layerEtage2]),
     propertyName: 'salle',
-    initial: false,
+    initial: true,
     collapsed: false,
+    bringTofront: false,
     zoom: 21,
     marker: false,
     autocomplete: true,
@@ -172,28 +174,14 @@ var searchControl = new L.Control.Search({
             foundLayer.setStyle(getHighlightStyle());
 
             // Réinitialiser le style après 3 secondes
-            setTimeout(function() {
-                foundLayer.setStyle(getDefaultStyle());
-            }, 3000);
-
-            // Centrer la vue sur la salle
-            map.setView(latlng, 21);
         }
     }
 });
+
+// Ajouter le contrôle de recherche à la carte
 map.addControl(searchControl);
 
+// Assurer que la barre de recherche est au-dessus du gestionnaire de calque
+document.querySelector('.leaflet-control-search').style.zIndex = 1000;
 
-// Créer un bouton pour réinitialiser la vue
-var resetViewControl = L.Control.extend({
-    options: { position: 'topright' },
-    onAdd: function(map) {
-        var container = L.DomUtil.create('div', 'leaflet-bar leaflet-control-custom');
-        container.innerHTML = '<h1><b>⟳</b></h1>';
-        container.title = "Recentrer"; 
-        container.onclick = function() { map.setView(initialView.center, initialView.zoom); };
-        return container;
-    }
-});
-
-map.addControl(new resetViewControl());
+document.querySelector('.leaflet-control-search input').placeholder = "Rechercher..."; // Personnaliser le placeholder
