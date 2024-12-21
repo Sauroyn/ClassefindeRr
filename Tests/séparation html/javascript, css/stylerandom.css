@@ -30,8 +30,6 @@ body {
 }
 
 
-
-
 /* Personnalisation du popup */
 .leaflet-popup-content {
     font-size: 14px;
@@ -60,8 +58,8 @@ body {
 /* Style général de la barre de recherche */
 .leaflet-control-search {
     position: relative;
-    background-color: #5FA199; /* Couleur de fond */
-    border: 2px solid #9BD0C9; /* Bordure */
+    background-color: #ffffff; /* Couleur de fond */
+    border: 2px solid #d1d1d1; /* Bordure */
     border-radius: 300px; /* Coins arrondis */
     box-shadow: 0 24px 24px rgba(0, 0, 0, 0.274); /* Ombre */
     padding: 0px; /* Espacement interne */
@@ -76,12 +74,12 @@ body {
 .leaflet-control-search input {
     width: 300px; /* Largeur du champ de texte */
     height: 30px; /* Hauteur */
-    border: 0px solid #6c757d; /* Bordure */
+    border: 0px solid #d1d1d1; /* Bordure */
     border-radius: 300px; /* Coins arrondis */
     padding: 10px; /* Espacement interne */
     font-size: 14px; /* Taille de la police */
     color: #212529; /* Couleur du texte */
-    background-color: #5FA199; /* Couleur de fond */
+    background-color: #ffffff; /* Couleur de fond */
 }
 
 /* Supprimer le contour par défaut au focus */
@@ -186,9 +184,9 @@ body {
 }
 
 .leaflet-control-layers {
-    background-color: #5FA199; /* Fond semi-transparent pour le contrôle des couches */
+    background-color: #ffffff; /* Fond semi-transparent pour le contrôle des couches */
     border-radius: 15px;  /* Coins arrondis */
-    border: 2px solid #9BD0C9 !important; /* Utilisation de la couleur RGBA pour la bordure avec !important */
+    border: 2px solid #cecece !important; /* Utilisation de la couleur RGBA pour la bordure avec !important */
     padding: 10px; /* Espacement autour du contrôle */
     padding-right: 20px;
     position: relative; /* Position absolue */
