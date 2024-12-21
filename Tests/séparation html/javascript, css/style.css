@@ -2,20 +2,20 @@
 @media (max-width: 600px), (hover: none) and (pointer: coarse) {
     .leaflet-control-layers{
         position: relative;
-        background-color: #5FA199;
-        z-index: 800;
+        background-color: #ffffff;
+        z-index: 100;
     }
 
     /* Style général de la barre de recherche */
     .leaflet-control-search {
-        position: absolute; /* Position absolue pour placer la barre de recherche */
+        position: relative; /* Position absolue pour placer la barre de recherche */
         display: flex; /* Utilisation de flexbox pour aligner le champ et l'icône */
         align-items: center; /* Aligner verticalement l'élément */
         justify-content: space-between; /* Espacement entre le champ de texte et l'icône */
         padding: 10px; /* Ajouter un peu de padding */
         box-sizing: border-box; /* Inclure padding et bordures dans la largeur totale */
         width: calc(100vw - 20px); /* Prendre toute la largeur de l'écran */
-        z-index: 1000;
+        z-index: 1001;
     }
 
     /* Largeur du champ de texte */
@@ -62,7 +62,7 @@
         right: 0;
         margin: 0;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        z-index: 1000;
+        z-index: 1001;
     }
     
 

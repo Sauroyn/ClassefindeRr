@@ -1,0 +1,21 @@
+.leaflet-control-search input {
+    width: calc(100% - 60px); /* Réduire la largeur pour tenir compte de l'icône */
+    padding: 10px; /* Ajouter un peu de padding */
+    font-size: 14px; /* Taille du texte */
+    box-sizing: border-box; /* Inclure le padding et la bordure dans la largeur totale */
+    border-radius: 300px; /* Coins arrondis */
+}
+
+
+
+
+
+
+
+
+.leaflet-control-zoom {
+    position: fixed;
+    bottom: 10px; /* Distance depuis le bas */
+    right: 10px;  /* Distance depuis la droite */
+    border-radius: 50%;
+}

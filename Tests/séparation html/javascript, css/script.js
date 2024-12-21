@@ -82,9 +82,7 @@ L.control.layers(baseMaps, null, {
 }).addTo(map, true);
 // Ajouter un contrôle des calques avec position personnalisée
 
-// Ajouter les couches sur la carte
-layerEtage1.addTo(map);
-layerEtage2.addTo(map);
+
 
 
 // Gestion des labels en fonction du zoom
@@ -144,7 +142,6 @@ var searchControl = new L.Control.Search({
     propertyName: 'salle',
     initial: true,
     collapsed: false,
-    bringTofront: false,
     zoom: 21,
     marker: false,
     autocomplete: true,
@@ -181,7 +178,8 @@ var searchControl = new L.Control.Search({
 // Ajouter le contrôle de recherche à la carte
 map.addControl(searchControl);
 
-// Assurer que la barre de recherche est au-dessus du gestionnaire de calque
-document.querySelector('.leaflet-control-search').style.zIndex = 1000;
+// Ajouter les couches sur la carte
+layerEtage1.addTo(map);
+layerEtage2.addTo(map);
 
 document.querySelector('.leaflet-control-search input').placeholder = "Rechercher..."; // Personnaliser le placeholder

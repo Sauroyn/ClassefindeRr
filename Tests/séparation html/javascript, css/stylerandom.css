@@ -51,8 +51,9 @@ body {
 
 .leaflet-control-zoom {
     position: fixed;
-    bottom: 20px; /* Distance depuis le bas */
-    right: 20px;  /* Distance depuis la droite */
+    bottom: 10px; /* Distance depuis le bas */
+    right: 10px;  /* Distance depuis la droite */
+    border-radius: 50%;
 }
 
 /* Style général de la barre de recherche */
@@ -162,7 +163,7 @@ body {
 }
 
 .leaflet-control-search .search-tooltip li:hover {
-    background-color: #e9ecef; /* Couleur de fond au survol */
+    background-color: #0c6fd3; /* Couleur de fond au survol */
     color: #495057; /* Couleur du texte */
 }
 

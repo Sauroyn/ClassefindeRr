@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Leaflet Map with Layers and Search</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-search@3.0.1/dist/leaflet-search.min.css"/>
+    <link rel="stylesheet" href="styles.css"/>
+
+    <style>
+        #map {
+            height: 100vh;
+        }
+
+        .leaflet-control-search {
+            position: absolute; /* Position absolue pour placer la barre de recherche */
+            top: 10px; /* Distance du haut de l'écran */
+            right: 10px; /* Alignement à droite de l'écran */
+            width: calc(100vw - 100px); /* Prend toute la largeur de l'écran moins 40px */
+            padding: 10px; /* Ajout de padding autour de la barre */
+            background-color: white; /* Couleur de fond */
+            border-radius: 20px; /* Coins arrondis */
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Ombre pour un effet surélevé */
+            z-index: 1001; /* S'assurer que la barre de recherche est au-dessus */
+        }
+
+        .leaflet-control-layers {
+            position: absolute; /* Position absolue pour placer le gestionnaire de calque */
+            top: 80px; /* Sous la barre de recherche */
+            right: 10px; /* Alignement à droite */
+            width: 50px; /* Taille fixe pour correspondre au design */
+            height: 50px; /* Hauteur fixe */
+            background-color: white; /* Couleur de fond */
+            border-radius: 12px; /* Coins légèrement arrondis */
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Ombre pour un effet surélevé */
+            z-index: 1000; /* Sous la barre de recherche */
+        }
+
+        .leaflet-control-search .search-tooltip {
+        width: 100%; /* Prendre toute la largeur de la barre de recherche */
+        box-sizing: border-box;
+        padding: 10px;
+        border-radius: 15px;
+        background-color: #5FA199;
+        color: #212529;
+        font-size: 14px;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        margin: 0;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        z-index: 1001;
+    }
+
+        .leaflet-control-zoom {
+            position: fixed;
+            bottom: 10px; /* Distance depuis le bas */
+            right: 10px;  /* Distance depuis la droite */
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet-search@3.0.1/dist/leaflet-search.min.js"></script>
+
+    <script>
+        // Initialize the map
+        var map = L.map('map').setView([48.8566, 2.3522], 13); // Paris coordinates
+
+        // Add base layers
+        var streets = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        });
+
+        var topo = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors, © OpenTopoMap'
+        });
+
+        // Add a marker layer
+        var markers = L.layerGroup();
+        var marker1 = L.marker([48.8566, 2.3522]).bindPopup("Paris").addTo(markers);
+        marker1.feature = { properties: { title: "Paris" } };
+        var marker2 = L.marker([48.8666, 2.3622]).bindPopup("Another location in Paris").addTo(markers);
+        marker2.feature = { properties: { title: "Another location in Paris" } };
+        var marker3 = L.marker([48.853, 2.3499]).bindPopup("Notre Dame Cathedral").addTo(markers);
+        marker3.feature = { properties: { title: "Notre Dame Cathedral" } };
+        markers.addLayer(marker1).addLayer(marker2).addLayer(marker3);
+
+        // Add Layers Control
+        var baseLayers = {
+            "Streets": streets,
+            "Topographic": topo
+        };
+
+        var overlays = {
+            "Markers": markers
+        };
+
+        var layersControl = L.control.layers(baseLayers, overlays, { position: 'topright' });
+        layersControl.addTo(map);
+
+        // Add search control
+        var searchControl = new L.Control.Search({
+            layer: markers,
+            propertyName: 'title',
+            marker: false,
+            moveToLocation: function(latlng, title, map) {
+                map.setView(latlng, 14); // Zoom when a result is found
+            },
+            position: 'topright'
+        });
+
+        searchControl.on('search:locationfound', function(e) {
+            e.layer.openPopup();
+        });
+
+        map.addControl(searchControl);
+
+        // Add the default layer and overlays
+        streets.addTo(map);
+        markers.addTo(map);
+    </script>
+</body>
+</html>
