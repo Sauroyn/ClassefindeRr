@@ -1,0 +1,42 @@
+// Créer un bouton pour réinitialiser la vue
+var resetViewControl = L.Control.extend({
+    options: { position: 'topright' },
+    onAdd: function(map) {
+        var container = L.DomUtil.create('div', 'leaflet-bar leaflet-control-custom');
+        container.innerHTML = '<h1><b>⟳</b></h1>';
+        container.title = "Recentrer"; 
+        container.onclick = function() { map.setView(initialView.center, initialView.zoom); };
+        return container;
+    }
+});
+
+map.addControl(new resetViewControl());
+
+.leaflet-tooltip-custom {
+    font-size: 14px;
+    color: black;
+    background-color: rgb(255, 255, 255);
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 2px 5px;
+}
+
+.leaflet-bar.leaflet-control-custom {
+    background-color: rgb(255, 255, 255);
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+
+
+
+
+
+
+
+https://unpkg.com/leaflet/dist/leaflet.css
