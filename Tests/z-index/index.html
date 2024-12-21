@@ -9,59 +9,6 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-search@3.0.1/dist/leaflet-search.min.css"/>
     <link rel="stylesheet" href="styles.css"/>
 
-    <style>
-        #map {
-            height: 100vh;
-        }
-
-        .leaflet-control-search {
-            position: absolute; /* Position absolue pour placer la barre de recherche */
-            top: 10px; /* Distance du haut de l'écran */
-            right: 10px; /* Alignement à droite de l'écran */
-            width: calc(100vw - 100px); /* Prend toute la largeur de l'écran moins 40px */
-            padding: 10px; /* Ajout de padding autour de la barre */
-            background-color: white; /* Couleur de fond */
-            border-radius: 20px; /* Coins arrondis */
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Ombre pour un effet surélevé */
-            z-index: 1001; /* S'assurer que la barre de recherche est au-dessus */
-        }
-
-        .leaflet-control-layers {
-            position: absolute; /* Position absolue pour placer le gestionnaire de calque */
-            top: 80px; /* Sous la barre de recherche */
-            right: 10px; /* Alignement à droite */
-            width: 50px; /* Taille fixe pour correspondre au design */
-            height: 50px; /* Hauteur fixe */
-            background-color: white; /* Couleur de fond */
-            border-radius: 12px; /* Coins légèrement arrondis */
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Ombre pour un effet surélevé */
-            z-index: 1000; /* Sous la barre de recherche */
-        }
-
-        .leaflet-control-search .search-tooltip {
-        width: 100%; /* Prendre toute la largeur de la barre de recherche */
-        box-sizing: border-box;
-        padding: 10px;
-        border-radius: 15px;
-        background-color: #5FA199;
-        color: #212529;
-        font-size: 14px;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        margin: 0;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        z-index: 1001;
-    }
-
-        .leaflet-control-zoom {
-            position: fixed;
-            bottom: 10px; /* Distance depuis le bas */
-            right: 10px;  /* Distance depuis la droite */
-            border-radius: 50%;
-        }
-    </style>
 </head>
 <body>
     <div id="map"></div>

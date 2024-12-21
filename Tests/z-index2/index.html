@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carte Leaflet avec Recherche et Gestionnaire de Calques</title>
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <!-- Leaflet Search CSS (v3.0.0) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-search/dist/leaflet-search.css" />
+
+    <!-- Style personnalisé -->
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+        }
+        #map {
+            height: 100%;
+        }
+        .leaflet-control-layers {
+            z-index: 1000; /* Assure que le gestionnaire de calque est en dessous */
+        }
+        .leaflet-search {
+            z-index: 2000; /* La barre de recherche est au-dessus du gestionnaire de calques */
+        }
+
+        /* Styles pour les écrans de bureau */
+        @media (min-width: 768px) {
+            .leaflet-top.leaflet-right {
+                position: absolute;
+                top: 10px;
+                right: 10px;
+            }
+        }
+
+        /* Styles pour les écrans mobiles */
+        @media (max-width: 767px) {
+            .leaflet-top.leaflet-right {
+                position: absolute;
+                top: 10px;
+                left: 0;
+                right: 0;
+                margin: 0 auto;
+                width: 100%;
+            }
+
+            .leaflet-control-layers {
+                position: absolute;
+                top: 50px;
+                right: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="map"></div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <!-- Leaflet Search JS (v3.0.0) -->
+    <script src="https://unpkg.com/leaflet-search/dist/leaflet-search.js"></script>
+    <!-- Script pour la carte -->
+    <script>
+        // Initialisation de la carte
+        var map = L.map('map').setView([48.8566, 2.3522], 12); // Coordonnées de Paris par défaut
+
+        // Ajouter le fond de carte
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+        // Ajouter un gestionnaire de calques
+        var baseMaps = {
+            "Carte OSM": L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'),
+            "Satellite": L.tileLayer('https://{s}.satellite.openstreetmap.org/{z}/{x}/{y}.png')
+        };
+        
+        var overlayMaps = {
+            "Marqueur": L.marker([48.8566, 2.3522]).bindPopup("Paris")
+        };
+
+        L.control.layers(baseMaps, overlayMaps, { position: 'topright' }).addTo(map);
+
+        // Ajouter une barre de recherche
+        var searchControl = new L.Control.Search({
+            layer: overlayMaps["Marqueur"], // Calque sur lequel rechercher
+            propertyName: 'name', // Nom de la propriété à chercher (pour ce cas, il n'y en a pas, c'est juste un exemple)
+            zoom: 12,
+            position: 'topright' // Position de la barre de recherche
+        });
+
+        map.addControl(searchControl);
+    </script>
+</body>
+</html>

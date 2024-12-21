@@ -79,7 +79,8 @@ var baseMaps = { "Étage 1": layerEtage1, "Étage 2": layerEtage2 };
 
 L.control.layers(baseMaps, null, { 
     collapsed: false,
-}).addTo(map, true);
+})
+.addTo(map, true);
 // Ajouter un contrôle des calques avec position personnalisée
 
 
@@ -142,6 +143,7 @@ var searchControl = new L.Control.Search({
     propertyName: 'salle',
     initial: true,
     collapsed: false,
+    position: 'topright',
     zoom: 21,
     marker: false,
     autocomplete: true,

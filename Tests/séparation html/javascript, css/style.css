@@ -2,8 +2,10 @@
 @media (max-width: 600px), (hover: none) and (pointer: coarse) {
     .leaflet-control-layers{
         position: relative;
+        display: flex;
+        top: 70px;  
         background-color: #ffffff;
-        z-index: 100;
+        z-index: 100; /* Contrôle des couches au deuxième plan */
     }
 
     /* Style général de la barre de recherche */
@@ -15,7 +17,81 @@
         padding: 10px; /* Ajouter un peu de padding */
         box-sizing: border-box; /* Inclure padding et bordures dans la largeur totale */
         width: calc(100vw - 20px); /* Prendre toute la largeur de l'écran */
-        z-index: 1001;
+        z-index: 1010; /* Barre de recherche au premier plan */
+        bottom: 75px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0); /* Ombre portée */
+    }
+                                                                                                                                                  
+    /* Largeur du champ de texte */
+    .leaflet-control-search input {
+        width: calc(100% - 60px); /* Réduire la largeur pour tenir compte de l'icône */
+        padding: 10px; /* Ajouter un peu de padding */
+        font-size: 14px; /* Taille du texte */
+        box-sizing: border-box; /* Inclure le padding et la bordure dans la largeur totale */
+        border-radius: 300px; /* Coins arrondis */
+    }
+
+    /* Style du bouton de recherche (loupe) */
+    .leaflet-control-search .search-button {
+        width: 40px; /* Taille de l'icône de recherche */
+        height: 40px; /* Taille de l'icône de recherche */
+        background-color: #5FA199; /* Couleur de fond */
+        background: url('./images/search-icon.png') no-repeat center center; /* Icône de recherche */
+        background-size: 70%; /* Ajuster la taille de l'icône */
+        border: none;
+        border-radius: 50%; /* Rendre le bouton rond */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer; /* Curseur pointer */
+        transition: background-color 0.3s; /* Transition pour l'effet de survol */
+    }
+
+    .leaflet-control-search .search-button:hover {
+        background-color: #73CBC0; /* Changer la couleur au survol */
+    }
+
+    /* Tooltip de recherche */
+    .leaflet-control-search .search-tooltip {
+        width: 100%; /* Prendre toute la largeur de la barre de recherche */
+        box-sizing: border-box;
+        padding: 10px;
+        border-radius: 15px;
+        background-color: #5FA199;
+        color: #212529;
+        font-size: 14px;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        margin: 0;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        z-index: 1010; /* Tooltip de recherche au premier plan */
+    }
+}
+
+@media(min-width: 600px) {
+    .leaflet-control-search {
+        position: absolute; /* Position absolue pour placer la barre de recherche */
+        top: 0px; /* Aligner en haut */
+        left: calc(-100vw + 120px); /* Aligner à gauche */
+        width: 500px; /* Largeur de 300px */
+        display: flex; /* Utilisation de flexbox pour aligner le champ et l'icône */
+        align-items: center; /* Aligner verticalement l'élément */
+        justify-content: space-between; /* Espacement entre le champ de texte et l'icône */
+        padding: 10px; /* Ajouter un peu de padding */
+        box-sizing: border-box; /* Inclure padding et bordures dans la largeur totale */
+        z-index: 1010; /* Barre de recherche au premier plan */
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0); /* Ombre portée */
+    }
+
+
+    .leaflet-control-layers{
+        position: relative;
+        display: flex;
+        top: 0px;
+        background-color: #ffffff;
+        z-index: 100; /* Contrôle des couches au deuxième plan */
     }
 
     /* Largeur du champ de texte */
@@ -62,8 +138,6 @@
         right: 0;
         margin: 0;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        z-index: 1001;
+        z-index: 1010; /* Tooltip de recherche au premier plan */
     }
-    
-
 }
