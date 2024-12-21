@@ -62,7 +62,7 @@ body {
     background-color: #ffffff; /* Couleur de fond */
     border: 2px solid #d1d1d1; /* Bordure */
     border-radius: 30px; /* Coins arrondis */
-    box-shadow: 0 24px 24px rgba(0, 0, 0, 0.274); /* Ombre */
+    box-shadow: 0 24px 24px rgba(255, 255, 255, 0.274); /* Ombre */
     padding: 0px; /* Espacement interne */
     font-family: 'Arial', sans-serif; /* Police */
     color: #000000; /* Couleur du texte */
@@ -71,17 +71,7 @@ body {
     gap: 0px; /* Espacement entre les éléments */
 }
 
-/* Style du champ de saisie */
-.leaflet-control-search input {
-    width: 3000px; /* Largeur du champ de texte */
-    height: 30px; /* Hauteur */
-    border: 0px solid #d1d1d1; /* Bordure */
-    border-radius: 300px; /* Coins arrondis */
-    padding: 10px; /* Espacement interne */
-    font-size: 14px; /* Taille de la police */
-    color: #212529; /* Couleur du texte */
-    background-color: #ffffff; /* Couleur de fond */
-}
+
 
 
 /* Supprimer le contour par défaut au focus */

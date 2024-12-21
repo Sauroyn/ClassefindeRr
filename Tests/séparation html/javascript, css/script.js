@@ -169,16 +169,23 @@ var searchControl = new L.Control.Search({
             });
             parentLayer.addTo(map);
 
+            // Centrer et zoomer sur la salle trouvée
+            map.setView(latlng, 21); // Centrer sur les coordonnées avec le zoom spécifié
+
             // Changer temporairement le style de la salle recherchée
             foundLayer.setStyle(getHighlightStyle());
 
             // Réinitialiser le style après 3 secondes
+            setTimeout(function() {
+                parentLayer.resetStyle(foundLayer);
+            }, 3000);
         }
     }
 });
 
 // Ajouter le contrôle de recherche à la carte
 map.addControl(searchControl);
+
 
 // Ajouter les couches sur la carte
 layerEtage1.addTo(map);
