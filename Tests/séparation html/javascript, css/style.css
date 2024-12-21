@@ -1,19 +1,9 @@
-body {
-    margin: 0;
-}
-
-#map {
-    height: 100vh;
-    width: 100%;
-}
-
 /* Ajustements pour les petits écrans */
 @media (max-width: 600px), (hover: none) and (pointer: coarse) {
+
     .leaflet-control-layers{
         position: relative;
-        display: flex;
-        top: 70px;  
-        background-color: #ffffff;
+        top: 65px;
         z-index: 100; /* Contrôle des couches au deuxième plan */
     }
 
@@ -23,12 +13,12 @@ body {
         display: flex; /* Utilisation de flexbox pour aligner le champ et l'icône */
         align-items: center; /* Aligner verticalement l'élément */
         justify-content: space-between; /* Espacement entre le champ de texte et l'icône */
-        padding: 10px; /* Ajouter un peu de padding */
+        padding: 5px; /* Ajouter un peu de padding */
         box-sizing: border-box; /* Inclure padding et bordures dans la largeur totale */
         width: calc(100vw - 20px); /* Prendre toute la largeur de l'écran */
         z-index: 1010; /* Barre de recherche au premier plan */
         bottom: 75px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0); /* Ombre portée */
+        border-radius: 3000px;
     }
                                                                                                                                                   
     /* Largeur du champ de texte */
@@ -44,9 +34,8 @@ body {
     .leaflet-control-search .search-button {
         width: 40px; /* Taille de l'icône de recherche */
         height: 40px; /* Taille de l'icône de recherche */
-        background-color: #5FA199; /* Couleur de fond */
         background: url('./images/search-icon.png') no-repeat center center; /* Icône de recherche */
-        background-size: 70%; /* Ajuster la taille de l'icône */
+        background-size: 65%; /* Ajuster la taille de l'icône */
         border: none;
         border-radius: 50%; /* Rendre le bouton rond */
         display: flex;
@@ -55,27 +44,9 @@ body {
         cursor: pointer; /* Curseur pointer */
         transition: background-color 0.3s; /* Transition pour l'effet de survol */
     }
-
-    .leaflet-control-search .search-button:hover {
-        background-color: #73CBC0; /* Changer la couleur au survol */
-    }
-
-    /* Tooltip de recherche */
     .leaflet-control-search .search-tooltip {
-        width: 100%; /* Prendre toute la largeur de la barre de recherche */
-        box-sizing: border-box;
-        padding: 10px;
-        border-radius: 15px;
-        background-color: #5FA199;
-        color: #212529;
-        font-size: 14px;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        margin: 0;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        z-index: 1010; /* Tooltip de recherche au premier plan */
+        width: calc(100% - 110px); /* Prendre toute la largeur de la barre de recherche */
+        top: 65px;
     }
 }
 
@@ -91,11 +62,8 @@ body {
         padding: 10px; /* Ajouter un peu de padding */
         box-sizing: border-box; /* Inclure padding et bordures dans la largeur totale */
         z-index: 1010; /* Barre de recherche au premier plan */
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0); /* Ombre portée */
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Ombre portée */
     }
-
-    
-
 
     .leaflet-control-layers{
         position: relative;
@@ -118,7 +86,7 @@ body {
     .leaflet-control-search .search-button {
         width: 40px; /* Taille de l'icône de recherche */
         height: 40px; /* Taille de l'icône de recherche */
-        background-color: #5FA199; /* Couleur de fond */
+        background-color: #ffffff; /* Couleur de fond */
         background: url('./images/search-icon.png') no-repeat center center; /* Icône de recherche */
         background-size: 70%; /* Ajuster la taille de l'icône */
         border: none;
@@ -130,25 +98,5 @@ body {
         transition: background-color 0.3s; /* Transition pour l'effet de survol */
     }
 
-    .leaflet-control-search .search-button:hover {
-        background-color: #73CBC0; /* Changer la couleur au survol */
-    }
-
-    /* Tooltip de recherche */
-    .leaflet-control-search .search-tooltip {
-        width: 100%; /* Prendre toute la largeur de la barre de recherche */
-        box-sizing: border-box;
-        padding: 10px;
-        border-radius: 15px;
-        background-color: #5FA199;
-        color: #212529;
-        font-size: 14px;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        margin: 0;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        z-index: 1010; /* Tooltip de recherche au premier plan */
-    }
+    
 }

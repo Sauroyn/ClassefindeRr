@@ -192,3 +192,35 @@ layerEtage1.addTo(map);
 layerEtage2.addTo(map);
 
 document.querySelector('.leaflet-control-search input').placeholder = "Rechercher..."; // Personnaliser le placeholder
+
+// Gestion des labels en fonction du zoom
+function updateLabelsVisibility() {
+    var currentZoom = map.getZoom();
+    var showLabels = currentZoom >= 20; // Affiche les labels pour un zoom >= 20
+
+    map.eachLayer(function(layer) {
+        if (layer instanceof L.GeoJSON) {
+            layer.eachLayer(function(subLayer) {
+                if (subLayer.getTooltip()) {
+                    if (showLabels) {
+                        subLayer.openTooltip();
+                    } else {
+                        subLayer.closeTooltip();
+                    }
+                }
+            });
+        }
+    });
+}
+
+// Appliquer les labels au changement de zoom
+map.on('zoomend', updateLabelsVisibility);
+
+// Mettre à jour les labels lors du changement de calque
+map.on('baselayerchange', function(e) {
+    setTimeout(updateLabelsVisibility, 50); // Petit délai pour permettre le rendu du calque
+});
+
+// Ajouter les couches sur la carte
+layerEtage1.addTo(map);
+updateLabelsVisibility(); // Initialiser l'état des labels
