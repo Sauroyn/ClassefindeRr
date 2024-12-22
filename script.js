@@ -1,18 +1,28 @@
 // Initialiser la carte
-var map = L.map('map').setView([45.9368, 6.1322], 18);
+var map = L.map('map', { zoomControl: true }).setView([45.9368, 6.1322], 18);
 
 L.tileLayer('http://89.168.57.91:8080/LyceeLachenal/{z}/{x}/{y}.png', {
     minZoom: 17,
     maxZoom: 22,
     attribution: '&copy; OpenStreetMap contributors'
-  }).addTo(map);
+}).addTo(map);
 
+// Fonction de style par défaut
+function getDefaultStyle() {
+    return {
+        color: "#16a34a",
+        weight: 2,
+        opacity: 1,
+        fillColor: "#22c55e",
+        fillOpacity: 0.4
+    };
+}
 
 // Définir les données GeoJSON pour chaque étage
 var geojsonDataEtage1 = {
     "type": "FeatureCollection",
     "features": [
-        { "type": "Feature", "properties": { "salle": "13" }, "geometry": { "type": "MultiPolygon", "coordinates": [ [ [ [ 6.132443855592967, 45.936792791783532 ], [ 6.132451800410498, 45.936862076107261 ], [ 6.132332645198166, 45.936867696926917 ], [ 6.132323764318674, 45.936798784599809 ], [ 6.132443855592967, 45.936792791783532 ] ] ] ] } },
+        { "type": "Feature", "properties": { "Salle": "13" }, "geometry": { "type": "MultiPolygon", "coordinates": [ [ [ [ 6.132443855592967, 45.936792791783532 ], [ 6.132451800410498, 45.936862076107261 ], [ 6.132332645198166, 45.936867696926917 ], [ 6.132323764318674, 45.936798784599809 ], [ 6.132443855592967, 45.936792791783532 ] ] ] ] } },
         { "type": "Feature", "properties": { "salle": "14" }, "geometry": { "type": "MultiPolygon", "coordinates": [ [ [ [ 6.132323764318674, 45.93679878003244 ], [ 6.132332645193752, 45.936867696937178 ], [ 6.132169440848435, 45.936875476859768 ], [ 6.132160492656691, 45.936806544549889 ], [ 6.132323764318674, 45.93679878003244 ] ] ] ] } },
         { "type": "Feature", "properties": { "salle": "12" }, "geometry": { "type": "MultiPolygon", "coordinates": [ [ [ [ 6.132338097023253, 45.936716667911078 ], [ 6.132346542802771, 45.936781465154866 ], [ 6.132227172282988, 45.936787083013414 ], [ 6.132219251901891, 45.936722066542458 ], [ 6.132338097023253, 45.936716667911078 ] ] ] ] } },
         { "type": "Feature", "properties": { "salle": "11" }, "geometry": { "type": "MultiPolygon", "coordinates": [ [ [ [ 6.132219253543763, 45.936722064258774 ], [ 6.132227180492344, 45.936787079587916 ], [ 6.132107560408311, 45.936792893842551 ], [ 6.132099429867845, 45.936727498286743 ], [ 6.132219253543763, 45.936722064258774 ] ] ] ] } },
@@ -21,7 +31,7 @@ var geojsonDataEtage1 = {
         { "type": "Feature", "properties": { "salle": "8" }, "geometry": { "type": "MultiPolygon", "coordinates": [ [ [ [ 6.132034162856094, 45.936967030843746 ], [ 6.132129805972868, 45.936962027567596 ], [ 6.132146782185027, 45.937094102999801 ], [ 6.132050178520454, 45.937099556148802 ], [ 6.132034162856094, 45.936967030843746 ] ] ] ] } },
         { "type": "Feature", "properties": { "salle": "15" }, "geometry": { "type": "MultiPolygon", "coordinates": [ [ [ [ 6.132291844506018, 45.93705440405904 ], [ 6.132305228465431, 45.937189553478937 ], [ 6.132287198591141, 45.937205146048541 ], [ 6.13226320449913, 45.937221778117973 ], [ 6.132204944334536, 45.937188404911318 ], [ 6.132189418745586, 45.937059001748601 ], [ 6.132291844506018, 45.93705440405904 ] ] ] ] } },
         { "type": "Feature", "properties": { "salle": "Escalier" }, "geometry": { "type": "MultiPolygon", "coordinates": [ [ [ [ 6.132429212643101, 45.936677276337036 ], [ 6.132434054588134, 45.936712841350747 ], [ 6.132395279821793, 45.936744510723749 ], [ 6.132342136044464, 45.936747360012134 ], [ 6.132338097823097, 45.936716658581339 ], [ 6.132385145062337, 45.936678840720951 ], [ 6.132429212643101, 45.936677276337036 ] ] ] ] } },
-        { "type": "Feature", "properties": { "salle": "Sanitaires" }, "geometry": { "type": "MultiPolygon", "coordinates": [ [ [ [ 6.132322925088437, 45.936918998692519 ], [ 6.132327943460623, 45.936952494757485 ], [ 6.132285071663862, 45.936986031700897 ], [ 6.132229085449164, 45.936950899707192 ], [ 6.132270918286057, 45.936921370819881 ], [ 6.132322925088437, 45.936918998692519 ] ] ] ] } },
+        { "type": "Feature", "properties": { "salle": "Sanitaire" }, "geometry": { "type": "MultiPolygon", "coordinates": [ [ [ [ 6.132322925088437, 45.936918998692519 ], [ 6.132327943460623, 45.936952494757485 ], [ 6.132285071663862, 45.936986031700897 ], [ 6.132229085449164, 45.936950899707192 ], [ 6.132270918286057, 45.936921370819881 ], [ 6.132322925088437, 45.936918998692519 ] ] ] ] } },
         { "type": "Feature", "properties": { "salle": "7.8" }, "geometry": { "type": "MultiPolygon", "coordinates": [ [ [ [ 6.132146752780492, 45.937094072325785 ], [ 6.132155613343883, 45.937160109923944 ], [ 6.132058539206915, 45.937165017752214 ], [ 6.132050227527985, 45.937099552740484 ], [ 6.132146752780492, 45.937094072325785 ] ] ] ] } },
         { "type": "Feature", "properties": { "salle": "7" }, "geometry": { "type": "MultiPolygon", "coordinates": [ [ [ [ 6.132155652549918, 45.93716013718965 ], [ 6.132172550350009, 45.937297392623044 ], [ 6.132127541824469, 45.937332483498757 ], [ 6.132076181921632, 45.937303309267982 ], [ 6.132058534306163, 45.937165019456316 ], [ 6.132155652549918, 45.93716013718965 ] ] ] ] } },
         { "type": "Feature", "properties": { "salle": "Escalier" }, "geometry": { "type": "MultiPolygon", "coordinates": [ [ [ [ 6.132124809654063, 45.936927665818267 ], [ 6.132129592790053, 45.936961966219414 ], [ 6.132034184909476, 45.936967024027155 ], [ 6.132030019268502, 45.936932969021555 ], [ 6.132124809654063, 45.936927665818267 ] ] ] ] } },
@@ -55,42 +65,71 @@ var geojsonDataEtage1 = {
         { "type": "Feature", "properties": { "salle": "Salle des professeurs" }, "geometry": { "type": "MultiPolygon", "coordinates": [ [ [ [ 6.133212231239984, 45.937350702473871 ], [ 6.133214740426077, 45.937402616190241 ], [ 6.13322101339131, 45.937454093608906 ], [ 6.133180866413824, 45.937491174770706 ], [ 6.133110721920537, 45.937495412859505 ], [ 6.133104448955305, 45.937431284251304 ], [ 6.133027918779474, 45.937434337996237 ], [ 6.133023414986497, 45.937360299971317 ], [ 6.133212231239984, 45.937350702473871 ] ] ] ] } },
         { "type": "Feature", "properties": { "salle": "Escalier" }, "geometry": { "type": "MultiPolygon", "coordinates": [ [ [ [ 6.133331260755263, 45.937414449457016 ], [ 6.13328389986776, 45.937417503202859 ], [ 6.133290172832993, 45.937483594946983 ], [ 6.133336592775709, 45.937480977453667 ], [ 6.133331260755263, 45.937414449457016 ] ] ] ] } },
         { "type": "Feature", "properties": { "salle": null }, "geometry": { "type": "MultiPolygon", "coordinates": [ [ [ [ 6.132220627360129, 45.937257247778014 ], [ 6.132243053210834, 45.937271971235731 ], [ 6.13225183536216, 45.937265754665177 ], [ 6.132227684446018, 45.937251576519195 ], [ 6.132220627360129, 45.937257247778014 ] ] ] ] } },
-        { "type": "Feature", "properties": { "salle": null }, "geometry": { "type": "MultiPolygon", "coordinates": [ [ [ [ 6.13281075656434, 45.937507327903141 ], [ 6.132811540684995, 45.937512671949321 ], [ 6.132903753273905, 45.937506782592266 ], [ 6.132903145580401, 45.937501043195077 ], [ 6.13281075656434, 45.937507327903141 ] ] ] ] } 
-    }]
+        { "type": "Feature", "properties": { "salle": null }, "geometry": { "type": "MultiPolygon", "coordinates": [ [ [ [ 6.13281075656434, 45.937507327903141 ], [ 6.132811540684995, 45.937512671949321 ], [ 6.132903753273905, 45.937506782592266 ], [ 6.132903145580401, 45.937501043195077 ], [ 6.13281075656434, 45.937507327903141 ] ] ] ] } }
+    ]
 };
 
 var geojsonDataEtage2 = {
     "type": "FeatureCollection",
     "features": [
-        { "type": "Feature", "properties": { "salle": "24" }, "geometry": { "type": "Polygon", "coordinates": [ [ [ 6.132218592433576, 45.936723513388131 ], [ 6.132342978502976, 45.936718186750738 ], [ 6.132350944113331, 45.936783171692035 ], [ 6.132225945304675, 45.936788498323175 ], [ 6.132218592433576, 45.936723513388131 ] ] ] } },
+        { "type": "Feature", "properties": { "salle": "Sanitaire" }, "geometry": { "type": "Polygon", "coordinates": [ [ [ 6.132218592433576, 45.936723513388131 ], [ 6.132342978502976, 45.936718186750738 ], [ 6.132350944113331, 45.936783171692035 ], [ 6.132225945304675, 45.936788498323175 ], [ 6.132218592433576, 45.936723513388131 ] ] ] } },
         { "type": "Feature", "properties": { "salle": "23" }, "geometry": { "type": "Polygon", "coordinates": [ [ [ 6.132094512733808, 45.936727987763149 ], [ 6.132218592433576, 45.936723939519112 ], [ 6.132224719826159, 45.936788285257947 ], [ 6.132100946496017, 45.936793611888618 ], [ 6.132094512733808, 45.936727987763149 ] ] ] }
     }]
-};
+};  
 
-// Fonction de style par défaut
-function getDefaultStyle() {
-    return {
-        color: "#16a34a",
-        weight: 2,
-        opacity: 1,
-        fillColor: "#22c55e",
-        fillOpacity: 0.4
-    };
+// Variables pour les calques
+var layerEtage1, layerEtage2;
+
+// Fonction pour créer les calques GeoJSON
+function createLayer(geojsonData) {
+    return L.geoJSON(geojsonData, {
+        style: getDefaultStyle,
+        onEachFeature: onEachFeature
+    });
 }
 
-// Coordonnées et zoom de départ
-var initialView = {
-    center: [45.9368, 6.1322],
-    zoom: 17
+// Initialiser les calques
+layerEtage1 = createLayer(geojsonDataEtage1);
+layerEtage2 = createLayer(geojsonDataEtage2);
+
+// Ajouter uniquement l'étage 1 au chargement
+layerEtage1.addTo(map);
+
+// Gestionnaire des couches (calques de base)
+var baseMaps = {
+    "Étage 1": layerEtage1,
+    "Étage 2": layerEtage2
 };
 
-// Fonction d'interaction (survol et clic)
+L.control.layers(baseMaps, null, { collapsed: false }).addTo(map);
+
+// Gestion des labels en fonction du zoom
+function updateLabels() {
+    var currentZoom = map.getZoom();
+    var showLabels = currentZoom >= 20;
+
+    [layerEtage1, layerEtage2].forEach(function(layer) {
+        layer.eachLayer(function(subLayer) {
+            if (subLayer.getTooltip()) {
+                if (showLabels) {
+                    subLayer.openTooltip();
+                } else {
+                    subLayer.closeTooltip();
+                }
+            }
+        });
+    });
+}
+
+map.on('zoomend', updateLabels);
+
+// Fonction d'interaction pour les GeoJSON
 function onEachFeature(feature, layer) {
     var tooltip = L.tooltip({
         permanent: true,
         direction: "center",
         className: "leaflet-tooltip-custom"
-    }).setContent(feature.properties.salle);
+    }).setContent(feature.properties.salle || '');
 
     layer.bindTooltip(tooltip);
 
@@ -107,133 +146,123 @@ function onEachFeature(feature, layer) {
     });
 }
 
-// Définir les styles spécifiques pour les calques
-var layerEtage1 = L.geoJSON(geojsonDataEtage1, { 
-    style: getDefaultStyle, 
-    onEachFeature: onEachFeature,
+// Gestion des calques : n'afficher qu'un seul calque actif
+map.on('baselayerchange', function(e) {
+    if (e.name === "Étage 1") {
+        layerEtage2.remove();
+        layerEtage1.addTo(map);
+    } else if (e.name === "Étage 2") {
+        layerEtage1.remove();
+        layerEtage2.addTo(map);
+    }
+    updateLabels();
 });
 
-var layerEtage2 = L.geoJSON(geojsonDataEtage2, { 
-    style: getDefaultStyle, 
-    onEachFeature: onEachFeature,
-});
+var activeLayer = layerEtage1; // Calque actif initialisé à l'étage 1
 
-var baseMaps = { "Étage 1": layerEtage1, "Étage 2": layerEtage2 };
+// Fonction pour mettre en surbrillance les résultats
+function highlightResults(results, bounds) {
+    results.forEach(function(layer) {
+        layer.setStyle({
+            color: "#eab308",
+            fillColor: "#facc15",
+            fillOpacity: 0.7,
+            weight: 3
+        });
 
+        setTimeout(function() {
+            layer.setStyle(getDefaultStyle());
+        }, 3000);
 
-L.control.layers(baseMaps, null, { 
-    collapsed: false,
-})
-.addTo(map, true);
-// Ajouter un contrôle des calques avec position personnalisée
-
-
-// Gestion des labels en fonction du zoom
-map.on('zoomend', function() {
-    var currentZoom = map.getZoom();
-    var showLabels = currentZoom >= 20; // Affiche les labels pour un zoom >= 20
-
-    map.eachLayer(function(layer) {
-        if (layer instanceof L.GeoJSON) {
-            layer.eachLayer(function(subLayer) {
-                if (subLayer.getTooltip()) {
-                    if (showLabels) {
-                        subLayer.openTooltip();
-                    } else {
-                        subLayer.closeTooltip();
-                    }
-                }
-            });
-        }
+        bounds.extend(layer.getBounds());
     });
-});
-
-// Géolocalisation
-map.locate({setView: true, maxZoom: 16});
-
-map.on('locationfound', function(e) {
-    var radius = e.accuracy;
-    
-    // Création du marqueur à la position actuelle
-    L.marker(e.latlng).addTo(map)
-        .bindPopup("Vous êtes dans les " + radius + " m").openPopup();
-
-    // Création d'un cercle autour de la position
-    L.circle(e.latlng, {
-        radius: radius,
-        color: "#15803d",        // Couleur du contour du cercle
-        fillColor: "#16a34a",     // Couleur de remplissage du cercle
-        fillOpacity: 0.2         // Opacité du remplissage
-    }).addTo(map);
-});
-
-
-// Définir un style de surbrillance
-function getHighlightStyle() {
-    return {
-        color: "#eab308", // Jaune pour attirer l'attention
-        weight: 3,
-        opacity: 1,
-        fillColor: "#facc15",
-        fillOpacity: 0.7
-    };
 }
 
-// Ajouter une barre de recherche avec surbrillance et basculement de calque
+// Mettre à jour activeLayer lorsque le calque change
+map.on('layeradd', function(e) {
+    if (e.layer === layerEtage1) {
+        activeLayer = layerEtage1;
+    } else if (e.layer === layerEtage2) {
+        activeLayer = layerEtage2;
+    }
+});
+
+// Barre de recherche
 var searchControl = new L.Control.Search({
-    layer: L.layerGroup([layerEtage1, layerEtage2]),
+    layer: L.layerGroup([layerEtage1, layerEtage2]), // Groupement des calques
     propertyName: 'salle',
-    initial: true,
+    initial: false,
     collapsed: false,
     position: 'topright',
     zoom: 21,
     marker: false,
     autocomplete: true,
     moveToLocation: function(latlng, title, map) {
-        var foundLayer = null;
+        var foundLayers = [];
+        var bounds = L.latLngBounds();
 
-        // Trouver le calque contenant la salle recherchée
-        [layerEtage1, layerEtage2].forEach(function(layer) {
-            layer.eachLayer(function(subLayer) {
-                if (subLayer.feature && subLayer.feature.properties.salle === title) {
-                    foundLayer = subLayer;
-                }
-            });
+        // Étape 1 : Recherche uniquement sur le calque actif
+        activeLayer.eachLayer(function(subLayer) {
+            if (subLayer.feature && subLayer.feature.properties.salle === title) {
+                foundLayers.push(subLayer);
+                bounds.extend(subLayer.getBounds());
+            }
         });
 
-        if (foundLayer) {
-            // Activer le calque correspondant si nécessaire
-            var parentLayer = foundLayer.feature.properties.salle <= 20 ? layerEtage1 : layerEtage2;
-            map.eachLayer(function(layer) {
-                if (layer instanceof L.GeoJSON) {
-                    map.removeLayer(layer);
-                }
-            });
-            parentLayer.addTo(map);
+        // Si des résultats sont trouvés sur le calque actif
+        if (foundLayers.length > 0) {
+            highlightResults(foundLayers, bounds);
 
-            // Centrer et zoomer sur la salle trouvée
-            map.setView(latlng, 21); // Centrer sur les coordonnées avec le zoom spécifié
+            if (bounds.isValid()) {
+                map.fitBounds(bounds, { padding: [20, 20] });
+            }
+            return;
+        }
 
-            // Changer temporairement le style de la salle recherchée
-            foundLayer.setStyle(getHighlightStyle());
+        // Étape 2 : Recherche globale uniquement si aucun résultat n'a été trouvé sur le calque actif
+        var globalFoundLayers = [];
+        var globalBounds = L.latLngBounds();
+        var targetLayer = null;
 
-            // Réinitialiser le style après 3 secondes
-            setTimeout(function() {
-                parentLayer.resetStyle(foundLayer);
-            }, 3000);
+        [layerEtage1, layerEtage2].forEach(function(layer) {
+            if (layer !== activeLayer) { // Ne pas re-rechercher dans le calque actif
+                layer.eachLayer(function(subLayer) {
+                    if (subLayer.feature && subLayer.feature.properties.salle === title) {
+                        globalFoundLayers.push(subLayer);
+                        globalBounds.extend(subLayer.getBounds());
+                        targetLayer = layer;
+                    }
+                });
+            }
+        });
+
+        if (globalFoundLayers.length > 0) {
+            // Changer de calque uniquement si le résultat est trouvé dans un autre calque
+            if (targetLayer && targetLayer !== activeLayer) {
+                map.eachLayer(function(layer) {
+                    if (layer instanceof L.GeoJSON) {
+                        layer.remove();
+                    }
+                });
+                targetLayer.addTo(map);
+                activeLayer = targetLayer;
+            }
+
+            // Surligner les résultats et ajuster la vue
+            highlightResults(globalFoundLayers, globalBounds);
+
+            if (globalBounds.isValid()) {
+                map.fitBounds(globalBounds, { padding: [20, 20] });
+            }
         }
     }
 });
 
-// Ajouter le contrôle de recherche à la carte
 map.addControl(searchControl);
+document.querySelector('.leaflet-control-search input').placeholder = "Rechercher...";
 
 
 
 
-document.querySelector('.leaflet-control-search input').placeholder = "Rechercher..."; // Personnaliser le placeholder
-
-
-
-// Ajouter uniquement le calque de l'étage 1 au chargement
-layerEtage1.addTo(map);
+// Mettre à jour les labels au chargement
+updateLabels();
