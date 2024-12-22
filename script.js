@@ -76,18 +76,9 @@ var layerEtage2 = L.geoJSON(geojsonDataEtage2, {
     onEachFeature: onEachFeature,
 });
 
-var baseMaps = { "Étage 1": layerEtage1, "Étage 2": layerEtage2 };
 
-
-L.control.layers(baseMaps, null, { 
-    collapsed: false,
-})
-.addTo(map, true);
-// Ajouter un contrôle des calques avec position personnalisée
-
-
-// Gestion des labels en fonction du zoom
-map.on('zoomend', function() {
+// Fonction de gestion des labels en fonction du zoom
+function toggleLabels() {
     var currentZoom = map.getZoom();
     var showLabels = currentZoom >= 20; // Affiche les labels pour un zoom >= 20
 
@@ -96,50 +87,33 @@ map.on('zoomend', function() {
             layer.eachLayer(function(subLayer) {
                 if (subLayer.getTooltip()) {
                     if (showLabels) {
-                        subLayer.openTooltip();
+                        subLayer.openTooltip();  // Affiche le label
                     } else {
-                        subLayer.closeTooltip();
+                        subLayer.closeTooltip(); // Cache le label
                     }
                 }
             });
         }
     });
-});
-
-// Géolocalisation
-map.locate({setView: true, maxZoom: 16});
-
-map.on('locationfound', function(e) {
-    var radius = e.accuracy;
-    
-    // Création du marqueur à la position actuelle
-    L.marker(e.latlng).addTo(map)
-        .bindPopup("Vous êtes dans les " + radius + " m").openPopup();
-
-    // Création d'un cercle autour de la position
-    L.circle(e.latlng, {
-        radius: radius,
-        color: "#15803d",        // Couleur du contour du cercle
-        fillColor: "#16a34a",     // Couleur de remplissage du cercle
-        fillOpacity: 0.2         // Opacité du remplissage
-    }).addTo(map);
-});
-
-
-// Définir un style de surbrillance
-function getHighlightStyle() {
-    return {
-        color: "#eab308", // Jaune pour attirer l'attention
-        weight: 3,
-        opacity: 1,
-        fillColor: "#facc15",
-        fillOpacity: 0.7
-    };
 }
 
-// Ajouter une barre de recherche avec surbrillance et basculement de calque
+// Gestion des labels en fonction du zoom
+map.on('zoomend', function() {
+    toggleLabels(); // Vérifie l'état des labels lors du zoom
+});
+
+// Gérer l'affichage des labels lors du changement de calque
+map.on('layeradd', function() {
+    toggleLabels(); // Vérifie l'état des labels lorsque de nouveaux calques sont ajoutés
+});
+
+map.on('layerremove', function() {
+    toggleLabels(); // Vérifie l'état des labels lorsque des calques sont supprimés
+});
+
+// Gérer l'affichage des labels après la recherche
 var searchControl = new L.Control.Search({
-    layer: L.layerGroup([layerEtage1, layerEtage2]),
+    layer: L.layerGroup([layerEtage1, layerEtage2]),  // Ajouter les deux calques pour la recherche
     propertyName: 'salle',
     initial: true,
     collapsed: false,
@@ -149,25 +123,28 @@ var searchControl = new L.Control.Search({
     autocomplete: true,
     moveToLocation: function(latlng, title, map) {
         var foundLayer = null;
+        var targetLayer = null;
 
         // Trouver le calque contenant la salle recherchée
         [layerEtage1, layerEtage2].forEach(function(layer) {
             layer.eachLayer(function(subLayer) {
                 if (subLayer.feature && subLayer.feature.properties.salle === title) {
                     foundLayer = subLayer;
+                    targetLayer = layer;  // On garde la référence du calque où la salle a été trouvée
                 }
             });
         });
 
         if (foundLayer) {
-            // Activer le calque correspondant si nécessaire
-            var parentLayer = foundLayer.feature.properties.salle <= 20 ? layerEtage1 : layerEtage2;
+            // Retirer tous les calques existants de la carte
             map.eachLayer(function(layer) {
                 if (layer instanceof L.GeoJSON) {
                     map.removeLayer(layer);
                 }
             });
-            parentLayer.addTo(map);
+
+            // Ajouter uniquement le calque correspondant (étage 1 ou étage 2)
+            targetLayer.addTo(map);
 
             // Centrer et zoomer sur la salle trouvée
             map.setView(latlng, 21); // Centrer sur les coordonnées avec le zoom spécifié
@@ -177,14 +154,36 @@ var searchControl = new L.Control.Search({
 
             // Réinitialiser le style après 3 secondes
             setTimeout(function() {
-                parentLayer.resetStyle(foundLayer);
+                targetLayer.resetStyle(foundLayer);
             }, 3000);
+
+            // Actualiser l'état des labels après la recherche
+            toggleLabels(); // Mettre à jour les labels après un changement de calque
         }
     }
 });
 
 // Ajouter le contrôle de recherche à la carte
 map.addControl(searchControl);
+
+// Ajouter seulement l'étage 1 à la carte au démarrage
+layerEtage1.addTo(map);
+
+// Contrôle de calques avec gestion de la visibilité
+var baseMaps = { "Étage 1": layerEtage1, "Étage 2": layerEtage2 };
+
+L.control.layers(baseMaps, null, { 
+    collapsed: false,
+}).addTo(map);
+
+// Assurer que l'étage 2 est caché au départ
+map.eachLayer(function(layer) {
+    if (layer === layerEtage2) {
+        map.removeLayer(layer);  // Enlever l'étage 2 au démarrage
+    }
+});
+
+
 document.querySelector('.leaflet-control-search input').placeholder = "Rechercher..."; // Personnaliser le placeholder
 // Ajouter uniquement le calque de l'étage 1 au chargement
 layerEtage1.addTo(map);
