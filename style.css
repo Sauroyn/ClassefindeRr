@@ -19,7 +19,6 @@ body {
 
 /* Bouton pour effacer la recherche (croix) */
 .leaflet-control-search .search-cancel {
-    background-color: #5FA199; /* Couleur de fond pour la croix */
     background: url('./images/cancel-icon.png') no-repeat center center; /* Chemin relatif vers votre icône personnalisée */
     background-size: 70%; /* Ajuster la taille de l'icône */
     border: none; /* Pas de bordure */
@@ -64,7 +63,7 @@ body {
 
 /* Style pour les éléments de la couche lorsqu'ils sont survolés */
 .leaflet-interactive:hover {
-    fill-opacity: 0.7;
+    fill-opacity: 1;
     cursor: pointer;
 }
 

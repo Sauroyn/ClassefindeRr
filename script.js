@@ -9,11 +9,11 @@ L.tileLayer('http://89.168.57.91:8080/LyceeLachenal/{z}/{x}/{y}.png', {
 // Fonction de style par défaut
 function getDefaultStyle() {
     return {
-        color: "#16a34a",
+        color: "#FFDE26",
         weight: 2,
         opacity: 1,
-        fillColor: "#22c55e",
-        fillOpacity: 0.4
+        fillColor: "#FFF79F",
+        fillOpacity: 0.7,
     };
 }
 
@@ -96,7 +96,7 @@ function onEachFeature(feature, layer) {
 
     layer.on({
         mouseover: function(e) {
-            e.target.setStyle({ fillColor: "#16a34a", color: "#15803d", fillOpacity: 0.7 });
+            e.target.setStyle({ fillColor: "#FFF36F", color: "#FFDE26", fillOpacity: 0.99 });
         },
         mouseout: function(e) {
             e.target.setStyle(getDefaultStyle());
