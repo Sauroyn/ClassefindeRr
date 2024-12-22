@@ -112,42 +112,7 @@ map.on('layerremove', function() {
     toggleLabels(); // Vérifie l'état des labels lorsque des calques sont supprimés
 });
 
-// Appel initial pour l'état des labels au début
-toggleLabels();
-
-
-// Géolocalisation
-map.locate({setView: true, maxZoom: 16});
-
-map.on('locationfound', function(e) {
-    var radius = e.accuracy;
-    
-    // Création du marqueur à la position actuelle
-    L.marker(e.latlng).addTo(map)
-        .bindPopup("Vous êtes dans les " + radius + " m").openPopup();
-
-    // Création d'un cercle autour de la position
-    L.circle(e.latlng, {
-        radius: radius,
-        color: "#15803d",        // Couleur du contour du cercle
-        fillColor: "#16a34a",     // Couleur de remplissage du cercle
-        fillOpacity: 0.2         // Opacité du remplissage
-    }).addTo(map);
-});
-
-
-// Définir un style de surbrillance
-function getHighlightStyle() {
-    return {
-        color: "#eab308", // Jaune pour attirer l'attention
-        weight: 3,
-        opacity: 1,
-        fillColor: "#facc15",
-        fillOpacity: 0.7
-    };
-}
-
-// Ajouter un seul calque visible au départ (étage 1)
+// Gérer l'affichage des labels après la recherche
 var searchControl = new L.Control.Search({
     layer: L.layerGroup([layerEtage1, layerEtage2]),  // Ajouter les deux calques pour la recherche
     propertyName: 'salle',
@@ -192,6 +157,9 @@ var searchControl = new L.Control.Search({
             setTimeout(function() {
                 targetLayer.resetStyle(foundLayer);
             }, 3000);
+
+            // Actualiser l'état des labels après la recherche
+            toggleLabels(); // Mettre à jour les labels après un changement de calque
         }
     }
 });
