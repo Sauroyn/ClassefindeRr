@@ -2,7 +2,7 @@
 var map = L.map('map').setView([45.9368, 6.1322], 18);
 
 L.tileLayer('http://89.168.57.91:8080/LyceeLachenal/{z}/{x}/{y}.png', {
-    minZoom: 15,
+    minZoom: 17,
     maxZoom: 22,
     attribution: '&copy; OpenStreetMap contributors'
   }).addTo(map);
@@ -81,7 +81,7 @@ function getDefaultStyle() {
 // Coordonnées et zoom de départ
 var initialView = {
     center: [45.9368, 6.1322],
-    zoom: 18
+    zoom: 17
 };
 
 // Fonction d'interaction (survol et clic)
@@ -128,12 +128,10 @@ L.control.layers(baseMaps, null, {
 // Ajouter un contrôle des calques avec position personnalisée
 
 
-
-
 // Gestion des labels en fonction du zoom
 map.on('zoomend', function() {
     var currentZoom = map.getZoom();
-    var showLabels = currentZoom >= 20; // Affiche les labels pour un zoom >= 16
+    var showLabels = currentZoom >= 20; // Affiche les labels pour un zoom >= 20
 
     map.eachLayer(function(layer) {
         if (layer instanceof L.GeoJSON) {
@@ -231,40 +229,11 @@ var searchControl = new L.Control.Search({
 map.addControl(searchControl);
 
 
-// Ajouter les couches sur la carte
-layerEtage1.addTo(map);
-layerEtage2.addTo(map);
+
 
 document.querySelector('.leaflet-control-search input').placeholder = "Rechercher..."; // Personnaliser le placeholder
 
-// Gestion des labels en fonction du zoom
-function updateLabelsVisibility() {
-    var currentZoom = map.getZoom();
-    var showLabels = currentZoom >= 20; // Affiche les labels pour un zoom >= 20
 
-    map.eachLayer(function(layer) {
-        if (layer instanceof L.GeoJSON) {
-            layer.eachLayer(function(subLayer) {
-                if (subLayer.getTooltip()) {
-                    if (showLabels) {
-                        subLayer.openTooltip();
-                    } else {
-                        subLayer.closeTooltip();
-                    }
-                }
-            });
-        }
-    });
-}
 
-// Appliquer les labels au changement de zoom
-map.on('zoomend', updateLabelsVisibility);
-
-// Mettre à jour les labels lors du changement de calque
-map.on('baselayerchange', function(e) {
-    setTimeout(updateLabelsVisibility, 50); // Petit délai pour permettre le rendu du calque
-});
-
-// Ajouter les couches sur la carte
+// Ajouter uniquement le calque de l'étage 1 au chargement
 layerEtage1.addTo(map);
-updateLabelsVisibility(); // Initialiser l'état des labels
