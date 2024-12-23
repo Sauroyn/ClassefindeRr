@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaflet OSRM Level Filter</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
+    <style>
+        #map {
+            width: 100%;
+            height: 100vh;
+        }
+        .control {
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+
+    <script>
+        // Initialize the map
+        const map = L.map('map').setView([48.8566, 2.3522], 13); // Centered on Paris
+
+        // Add a tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+        }).addTo(map);
+
+        // Create a control for level filtering
+        const levelControl = L.control({ position: 'topright' });
+        levelControl.onAdd = function () {
+            const div = L.DomUtil.create('div', 'control');
+            div.innerHTML = `
+                <label for="level-select">Filter by level:</label><br>
+                <select id="level-select">
+                    <option value="1">Level 1</option>
+                    <option value="0">Level 0</option>
+                </select>
+            `;
+            return div;
+        };
+        levelControl.addTo(map);
+
+        // Initialize the routing machine
+        const router = L.Routing.control({
+            waypoints: [
+                L.latLng(48.8566, 2.3522), // Start point
+                L.latLng(48.864716, 2.349014) // End point
+            ],
+            router: L.Routing.osrmv1({
+                serviceUrl: 'http://localhost:5000/route/v1' // Update to match your OSRM backend
+            }),
+            createMarker: () => null, // Disable default markers
+        }).addTo(map);
+
+        // Filter and display the route points based on the level
+        router.on('routesfound', function (e) {
+            const level = document.getElementById('level-select').value;
+            const route = e.routes[0];
+            const filteredPoints = route.coordinates.filter(coord => coord.level === parseInt(level));
+
+            // Add filtered points as markers
+            filteredPoints.forEach(point => {
+                L.circleMarker([point.lat, point.lng], {
+                    radius: 5,
+                    color: 'blue',
+                }).addTo(map);
+            });
+        });
+
+        // Recalculate route when level is changed
+        document.getElementById('level-select').addEventListener('change', () => {
+            map.eachLayer(layer => {
+                if (layer instanceof L.CircleMarker) {
+                    map.removeLayer(layer);
+                }
+            });
+            router.route();
+        });
+    </script>
+</body>
+</html>
