@@ -3,11 +3,11 @@ var map = L.map('map', { zoomControl: true }).setView([45.9368, 6.1322], 18);
 
 // Fonds de carte spécifiques à chaque étage
 var fondsCartes = {
-    "Étage 1": L.tileLayer('http://89.168.57.91:8080/LyceeLachenaletage1/{z}/{x}/{y}.png', {
+    "Étage 0": L.tileLayer('http://89.168.57.91:8080/LyceeLachenaletage1/{z}/{x}/{y}.png', {
         minZoom: 17,
         maxZoom: 22,
     }),
-    "Étage 2": L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    "Étage 1": L.tileLayer('http://89.168.57.91:8080/LyceeLachenaletage0/{z}/{x}/{y}.png', {
         minZoom: 17,
         maxZoom: 22,
     })
@@ -64,8 +64,8 @@ layerEtage1.addTo(map);
 
 // Gestionnaire des couches (calques de base)
 var baseMaps = {
-    "Étage 1": layerEtage1,
-    "Étage 2": layerEtage2
+    "Étage 0": layerEtage1,
+    "Étage 1": layerEtage2
 };
 
 L.control.layers(baseMaps, null, { collapsed: false }).addTo(map);
@@ -106,10 +106,10 @@ map.on('baselayerchange', function(e) {
     fondsCartes[e.name].addTo(map);
 
     // Gérer l'affichage des calques (optionnel si déjà géré)
-    if (e.name === "Étage 1") {
+    if (e.name === "Étage 0") {
         layerEtage2.remove();
         layerEtage1.addTo(map);
-    } else if (e.name === "Étage 2") {
+    } else if (e.name === "Étage 1") {
         layerEtage1.remove();
         layerEtage2.addTo(map);
     }
@@ -163,10 +163,10 @@ function onEachFeature(feature, layer) {
 
 // Gestion des calques : n'afficher qu'un seul calque actif
 map.on('baselayerchange', function(e) {
-    if (e.name === "Étage 1") {
+    if (e.name === "Étage 0") {
         layerEtage2.remove();
         layerEtage1.addTo(map);
-    } else if (e.name === "Étage 2") {
+    } else if (e.name === "1") {
         layerEtage1.remove();
         layerEtage2.addTo(map);
     }
