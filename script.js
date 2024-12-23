@@ -1,10 +1,20 @@
 // Initialiser la carte
 var map = L.map('map', { zoomControl: true }).setView([45.9368, 6.1322], 18);
 
-L.tileLayer('http://89.168.57.91:8080/LyceeLachenal/{z}/{x}/{y}.png', {
-    minZoom: 17,
-    maxZoom: 22,
-}).addTo(map);
+// Fonds de carte spécifiques à chaque étage
+var fondsCartes = {
+    "Étage 1": L.tileLayer('http://89.168.57.91:8080/LyceeLachenaletage1/{z}/{x}/{y}.png', {
+        minZoom: 17,
+        maxZoom: 22,
+    }),
+    "Étage 2": L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        minZoom: 17,
+        maxZoom: 22,
+    })
+};
+
+// Ajouter le fond de carte de l'étage 1 par défaut
+fondsCartes["Étage 1"].addTo(map);
 
 // Fonction de style par défaut
 function getDefaultStyle() {
@@ -22,8 +32,7 @@ var geojsonDataEtage1 = {
     "type": "FeatureCollection",
     "features": [
         { "type": "Feature", "properties": { "salle": "13" }, "geometry": { "type": "MultiPolygon", "coordinates": [ [ [ [ 6.132443855592967, 45.936792791783532 ], [ 6.132451800410498, 45.936862076107261 ], [ 6.132332645198166, 45.936867696926917 ], [ 6.132323764318674, 45.936798784599809 ], [ 6.132443855592967, 45.936792791783532 ] ] ] ] } },
-        { "type": "Feature", "properties": { "salle": "14" }, "geometry": { "type": "MultiPolygon", "coordinates": [ [ [ [ 6.132323764318674, 45.93679878003244 ], [ 6.132332645193752, 45.936867696937178 ], [ 6.132169440848435, 45.936875476859768 ], [ 6.132160492656691, 45.936806544549889 ], [ 6.132323764318674, 45.93679878003244 ] ] ] ] } },
-        { "type": "Feature", "properties": { "salle": null }, "geometry": { "type": "MultiPolygon", "coordinates": [ [ [ [ 6.13281075656434, 45.937507327903141 ], [ 6.132811540684995, 45.937512671949321 ], [ 6.132903753273905, 45.937506782592266 ], [ 6.132903145580401, 45.937501043195077 ], [ 6.13281075656434, 45.937507327903141 ] ] ] ] } }
+        { "type": "Feature", "properties": { "salle": "14" }, "geometry": { "type": "MultiPolygon", "coordinates": [ [ [ [ 6.132323764318674, 45.93679878003244 ], [ 6.132332645193752, 45.936867696937178 ], [ 6.132169440848435, 45.936875476859768 ], [ 6.132160492656691, 45.936806544549889 ], [ 6.132323764318674, 45.93679878003244 ] ] ] ] } }
     ]
 };
 
@@ -60,6 +69,51 @@ var baseMaps = {
 };
 
 L.control.layers(baseMaps, null, { collapsed: false }).addTo(map);
+
+// Fonction d'interaction pour les GeoJSON
+function onEachFeature(feature, layer) {
+    if (feature.properties.salle !== null) {
+        var tooltip = L.tooltip({
+            permanent: true,
+            direction: "center",
+            className: "leaflet-tooltip-custom"
+        }).setContent(feature.properties.salle);
+
+        layer.bindTooltip(tooltip);
+    }
+
+    layer.on({
+        mouseover: function(e) {
+            e.target.setStyle({ fillColor: "#FFF36F", color: "#FFDE26", fillOpacity: 0.99 });
+        },
+        mouseout: function(e) {
+            e.target.setStyle(getDefaultStyle());
+        },
+        click: function(e) {
+            map.fitBounds(e.target.getBounds());
+        }
+    });
+}
+
+// Gestion des calques et changement de fond de carte
+map.on('baselayerchange', function(e) {
+    // Supprimer tous les fonds de carte
+    Object.values(fondsCartes).forEach(function(tileLayer) {
+        map.removeLayer(tileLayer);
+    });
+
+    // Ajouter le fond de carte correspondant au calque actif
+    fondsCartes[e.name].addTo(map);
+
+    // Gérer l'affichage des calques (optionnel si déjà géré)
+    if (e.name === "Étage 1") {
+        layerEtage2.remove();
+        layerEtage1.addTo(map);
+    } else if (e.name === "Étage 2") {
+        layerEtage1.remove();
+        layerEtage2.addTo(map);
+    }
+});
 
 // Gestion des labels en fonction du zoom
 function updateLabels() {
