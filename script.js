@@ -1,7 +1,7 @@
 // Initialiser la carte
 var map = L.map('map', { zoomControl: true }).setView([45.9368, 6.1322], 18);
 
-L.tileLayer('http://89.168.57.91:8080/LyceeLachenal/{z}/{x}/{y}.png', {
+L.tileLayer('http://89.168.57.91:8080/LyceeLachenaletage1/{z}/{x}/{y}.png', {
     minZoom: 17,
     maxZoom: 22,
 }).addTo(map);
