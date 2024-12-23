@@ -10,7 +10,7 @@ body {
 /* Style général de la barre de recherche */
 .leaflet-control-search {
     background-color: #ffffff; /* Couleur de fond */
-    border: 2px solid #d1d1d1; /* Bordure */
+    border: 2px solid #d9d9d9; /* Bordure */
     border-radius: 30px; /* Coins arrondis */
     box-shadow: 0 24px 24px rgba(255, 255, 255, 0.274); /* Ombre */
     font-family: 'Arial', sans-serif; /* Police */
@@ -78,7 +78,7 @@ body {
     font-size: 14px;
     color: rgb(0, 0, 0);
     background-color: rgb(255, 255, 255);
-    border: 1px solid #ddd;
+    border: 1px solid #d9d9d9;
     border-radius: 15px;
     padding: 2px 5px;
 }
@@ -98,8 +98,8 @@ body {
 
 /* Pour personnaliser la couleur et l'apparence du cercle */
 .leaflet-circle {
-    stroke: #15803d; /* La couleur du bord du cercle */
-    fill: #16a34a;   /* La couleur de remplissage du cercle */
+    stroke: #d9d9d9; /* La couleur du bord du cercle */
+    fill: #ffffff;   /* La couleur de remplissage du cercle */
     fill-opacity: 0.4;
 }
 
@@ -138,7 +138,7 @@ body {
 .leaflet-control-layers {
     background-color: #ffffff; /* Fond semi-transparent pour le contrôle des couches */
     border-radius: 15px;  /* Coins arrondis */
-    border: 2px solid #cecece !important; /* Utilisation de la couleur RGBA pour la bordure avec !important */
+    border: 2px solid #d9d9d9 !important; /* Utilisation de la couleur RGBA pour la bordure avec !important */
     padding: 10px; /* Espacement autour du contrôle */
     padding-right: 15px;
     position: relative; /* Position absolue */
