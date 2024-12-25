@@ -58,7 +58,7 @@
             router: L.Routing.osrmv1({
                 serviceUrl: 'http://localhost:5000/route/v1' // Update to match your OSRM backend
             }),
-            createMarker: () => null, // Disable default markers
+
         }).addTo(map);
 
         // Filter and display the route points based on the level
