@@ -1,22 +1,75 @@
-// Initialiser la carte
-var map = L.map('map', { zoomControl: true }).setView([45.9368, 6.1322], 18);
+// Coordonnées du lycée (centre du plan)
+const lyceeCoords = [45.9368, 6.1322];
+const proximityThreshold = 50; // Distance en kilomètres
 
-// Fonds de carte spécifiques à chaque étage
-var fondsCartes = {
-    "Étage 0": L.tileLayer('http://89.168.57.91:8080/LyceeLachenaletage1/{z}/{x}/{y}.png', {
-        minZoom: 17,
-        maxZoom: 22,
-    }),
-    "Étage 1": L.tileLayer('http://89.168.57.91:8080/LyceeLachenaletage0/{z}/{x}/{y}.png', {
-        minZoom: 17,
-        maxZoom: 22,
-    })
-};
+// Fonction pour calculer la distance entre deux coordonnées
+function calculateDistance(lat1, lon1, lat2, lon2) {
+    const toRad = x => (x * Math.PI) / 180;
+    const R = 6371; // Rayon de la Terre en kilomètres
 
-// Ajouter le fond de carte de l'étage 1 par défaut
-fondsCartes["Étage 1"].addTo(map);
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+    const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
 
-// Fonction de style par défaut
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c; // Distance en kilomètres
+}
+
+// Vérifier la localisation de l'utilisateur
+function checkLocationPermission() {
+    if (!navigator.geolocation) {
+        alert("La géolocalisation n'est pas prise en charge par votre navigateur.");
+        return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+        position => {
+            const userCoords = [position.coords.latitude, position.coords.longitude];
+            const distance = calculateDistance(
+                userCoords[0],
+                userCoords[1],
+                lyceeCoords[0],
+                lyceeCoords[1]
+            );
+
+            if (distance <= proximityThreshold) {
+                // Afficher la carte si l'utilisateur est proche
+                initializeMap();
+            } else {
+                alert("Vous devez être à proximité du lycée pour afficher le plan.");
+            }
+        },
+        error => {
+            console.error("Erreur de géolocalisation :", error);
+            alert("Impossible d'obtenir votre localisation. Veuillez autoriser la géolocalisation.");
+        }
+    );
+}
+
+// Initialiser la carte uniquement après vérification de la localisation
+function initializeMap() {
+    // Initialiser la carte
+    var map = L.map('map', { zoomControl: true }).setView(lyceeCoords, 18);
+
+    // Fonds de carte spécifiques à chaque étage
+    var fondsCartes = {
+        "Étage 0": L.tileLayer('http://89.168.57.91:8080/LyceeLachenaletage1/{z}/{x}/{y}.png', {
+            minZoom: 17,
+            maxZoom: 22,
+        }),
+        "Étage 1": L.tileLayer('http://89.168.57.91:8080/LyceeLachenaletage0/{z}/{x}/{y}.png', {
+            minZoom: 17,
+            maxZoom: 22,
+        })
+    };
+
+    // Ajouter le fond de carte de l'étage 1 par défaut
+    fondsCartes["Étage 1"].addTo(map);
+
+    // (Reste de votre code de carte ici, inchangé)
+    // Fonction de style par défaut
 function getDefaultStyle() {
     return {
         color: "#FFDE26",
@@ -31,7 +84,7 @@ function getDefaultStyle() {
 var geojsonDataEtage2 = {
     "type": "FeatureCollection",
     "features": [
-        { "type": "Feature", "properties": { "salle": "13" }, "geometry": { "type": "MultiPolygon", "coordinates": [ [ [ [ 6.132443855592967, 45.936792791783532 ], [ 6.132451800410498, 45.936862076107261 ], [ 6.132332645198166, 45.936867696926917 ], [ 6.132323764318674, 45.936798784599809 ], [ 6.132443855592967, 45.936792791783532 ] ] ] ] } },
+        { "type": "Feature", "properties": { "salle": "13" }, "geometry": { "type": "MultiPolygon", "coordinates": [ [ [ [ 6.132443855592967, 45.936792791783791783532 ], [ 6.132451800410498, 45.936862076107261 ], [ 6.132332645198166, 45.936867696926917 ], [ 6.132323764318674, 45.936798784599809 ], [ 6.132443855592967, 45.936792791783532 ] ] ] ] } },
         { "type": "Feature", "properties": { "salle": "14" }, "geometry": { "type": "MultiPolygon", "coordinates": [ [ [ [ 6.132323764318674, 45.93679878003244 ], [ 6.132332645193752, 45.936867696937178 ], [ 6.132169440848435, 45.936875476859768 ], [ 6.132160492656691, 45.936806544549889 ], [ 6.132323764318674, 45.93679878003244 ] ] ] ] } },
     ]
 };
@@ -176,7 +229,7 @@ map.on('baselayerchange', function(e) {
 var activeLayer = layerEtage1; // Calque actif initialisé à l'étage 1
 
 // Fonction pour mettre en surbrillance les résultats
-function highlightResults(results, bounds) {
+function highlightResults(results, bounds) {791783
     results.forEach(function(layer) {
         layer.setStyle({
             color: "#eab308",
@@ -278,3 +331,10 @@ document.querySelector('.leaflet-control-search input').placeholder = "Recherche
 
 // Mettre à jour les labels au chargement
 updateLabels();
+
+}
+
+// Vérifier la localisation au chargement de la page
+document.addEventListener("DOMContentLoaded", checkLocationPermission);
+
+
